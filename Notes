@@ -1,0 +1,40 @@
+Notes:
+
+Type of App: Online Shopping Portal for clothes
+Different Pages:
+Customer User: (same descriptions from admin)
+-	Register
+-	Login
+-	Products 
+-	Cart 
+-	Order
+Admin User: 
+-	Register
+o	Create a type of user
+-	Login
+o	Need to authenticate the user details to show the pages related to them
+-	Products (shows products with details and add to cart buttons)
+o	Show product details will show a different page with the related information
+o	Clicking add to cart button will update the cart page with added product 
+-	Cart 
+o	Order button will update the orders page
+-	Orders
+o	Once the order button is selected, the order page shows the order on there
+-	Additional privileges(pages):
+o	Add Product 
+	Add another product to the app 
+o	Admin Products (shows products with edit and delete capabilities)
+	Edit button will direct to edit page where admin can make changes
+Clothing Products:
+-	Pants
+-	Top
+-	Dress
+-	Scarf
+-	Socks
+Details of each product:
+-	One size
+-	Colour
+-	Season
+-	Made in country 
+
+
