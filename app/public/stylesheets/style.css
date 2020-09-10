@@ -11,7 +11,13 @@ a {
 html,
 body {
   height: 100%;
+
 }
+.navBod{
+  min-height: 75rem;
+  padding-top: 4.5rem;
+}
+
 
 body {
   display: -ms-flexbox;
