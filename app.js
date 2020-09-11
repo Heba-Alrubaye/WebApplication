@@ -1,10 +1,45 @@
 var express = require('express');
+var path = require('path');
 var app = express();
 
-app.use(express.static(__dirname + '/views'));
-app.use(express.static(__dirname + '/public'));
+// app.use(express.static(__dirname + '/views'));
+// app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/')); // TODO: could be a security issue
+
+app.get('/add-product', (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
+});
+
+app.get('/admin-products', (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
+});
+
+app.get('/cart', (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'views', 'Cart.html'))
+});
+
+app.get('/edit', (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'views', 'Edit.html'))
+});
+
+app.get('/', (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'views', 'HomePage.html'));
+});
+
+app.get('/login', (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'views', 'Login.html'))
+});
+
+app.get('/orders', (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'views', 'Orders.html'))
+});
+
+app.get('/register', (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'views', 'Signup.html'))
+});
 
 var port = process.env.PORT || 8000;
+console.log("Running on port: " + port);
 app.listen(port);
 
 // var createError = require('http-errors');
