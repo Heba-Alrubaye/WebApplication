@@ -1,10 +1,30 @@
 var express = require('express');
 var path = require('path');
+var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+const { MongoClient } = require('mongodb');
+
+const username = "admin";
+const password = "BiINPxSnYq4ygeRf";
+
+const uri = `mongodb+srv://${username}:${password}@cluster0.7fsul.mongodb.net/test`;
+
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+client.connect();
+
+// mongoose.connect('mongodb+srv://${username}:${password}@cluster0.7fsul.mongodb.net/test')
+// var db = mongoose.connection;
+
 var app = express();
 
 // app.use(express.static(__dirname + '/views'));
 // app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/')); // TODO: could be a security issue
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}))
 
 app.get('/add-product', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
@@ -24,6 +44,15 @@ app.get('/edit', (req, res, next) => {
 
 app.get('/', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'HomePage.html'));
+});
+
+app.post('/register', (req, res, next) => {
+    var user = req.body;
+    const shop = client.db('shop');
+    const users = shop.collection('users');
+    users.insertOne(user, (err, result) => {
+        console.log('success');
+    })
 });
 
 app.get('/login', (req, res, next) => {
