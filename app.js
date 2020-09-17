@@ -3,6 +3,10 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
+const bcrypt = require('bcryptjs');
+
+const db = require('mongodb');
+const User = db.User;
 
 const username = "admin";
 const password = "BiINPxSnYq4ygeRf";
@@ -47,12 +51,23 @@ app.get('/', (req, res, next) => {
 });
 
 app.post('/register', (req, res, next) => {
-    var user = req.body;
-    const shop = client.db('shop');
-    const users = shop.collection('users');
-    users.insertOne(user, (err, result) => {
-        console.log('success');
-    })
+    var userBody = req.body;
+
+    if (await User.findOne({email: userBody.email})) {
+        throw 'Email "' + userBody.email + '" already taken!';
+    }
+
+    const hash = bcrypt.hashSync(userBody.password, 10);
+
+    const user = new User(userBody.email, hash);
+
+    await user.save();
+
+    // const shop = client.db('shop');
+    // const users = shop.collection('users');
+    // users.insertOne(user, (err, result) => {
+    //     console.log('success');
+    // })
 });
 
 app.get('/login', (req, res, next) => {
