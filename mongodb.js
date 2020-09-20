@@ -6,7 +6,7 @@ mongoose.connect(process.env.MONGODB_URI || config.connectionString, connectionO
 mongoose.Promise = global.Promise;
 
 module.exports = {
-    User: require('user.model')
+    User: require('./user.model')
 };
 
 const username = "admin";

@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
 const bcrypt = require('bcryptjs');
 
-const db = require('mongodb');
+const db = require('./mongodb');
 const User = db.User;
 
 const username = "admin";
