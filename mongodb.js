@@ -1,23 +1,26 @@
 const { MongoClient } = require('mongodb');
 const mongoose = require('mongoose');
 
+const username = "admin";
+const password = "BiINPxSnYq4ygeRf";
+
+const uri = `mongodb+srv://${username}:${password}@cluster0.7fsul.mongodb.net/test`;
+
 const connectionOptions = { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false };
-mongoose.connect(process.env.MONGODB_URI || config.connectionString, connectionOptions);
+mongoose.connect(uri, connectionOptions);
 mongoose.Promise = global.Promise;
 
 module.exports = {
     User: require('./user.model')
 };
 
-const username = "admin";
-const password = "BiINPxSnYq4ygeRf";
+
 
 async function main() {
     /**
      * Connection URI. Update <username>, <password>, and <your-cluster-url> to reflect your cluster.
      * See https://docs.mongodb.com/ecosystem/drivers/node/ for more details
      */
-    const uri = `mongodb+srv://${username}:${password}@cluster0.7fsul.mongodb.net/test`;
 
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
