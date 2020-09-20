@@ -53,7 +53,7 @@ app.get('/', (req, res, next) => {
 app.post('/register', (req, res, next) => {
     var userBody = req.body;
 
-    if (await User.findOne({email: userBody.email})) {
+    if (User.findOne({email: userBody.email})) {
         throw 'Email "' + userBody.email + '" already taken!';
     }
 
@@ -61,7 +61,7 @@ app.post('/register', (req, res, next) => {
 
     const user = new User(userBody.email, hash);
 
-    await user.save();
+    user.save();
 
     // const shop = client.db('shop');
     // const users = shop.collection('users');
