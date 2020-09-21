@@ -53,9 +53,9 @@ app.get('/', (req, res, next) => {
 app.post('/register', (req, res, next) => {
     var userBody = req.body;
 
-    if (User.findOne({email: userBody.email})) {
-        throw 'Email "' + userBody.email + '" already taken!';
-    }
+    // if (User.findOne({email: userBody.email})) {
+    //     throw 'Email "' + userBody.email + '" already taken!';
+    // }
 
     const hash = bcrypt.hashSync(userBody.password, 10);
 
