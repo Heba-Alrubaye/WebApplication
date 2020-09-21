@@ -57,11 +57,21 @@ app.post('/register', (req, res, next) => {
     //     throw 'Email "' + userBody.email + '" already taken!';
     // }
 
-    const hash = bcrypt.hashSync(userBody.password, 10);
+    console.log("creating user");
 
-    const user = new User(userBody.email, hash);
+    const user = new User(userBody);
+    console.log("user created");
+
+    const hash = bcrypt.hashSync(userBody.password, 10);
+    console.log("hashed password");
+
+    user.hash = hash;
+    console.log("added has to user");
 
     user.save();
+    console.log("user saved");
+
+    res.sendFile(path.join(__dirname, 'views', 'Login.html'));
 
     // const shop = client.db('shop');
     // const users = shop.collection('users');
