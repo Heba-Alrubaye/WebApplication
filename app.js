@@ -11,7 +11,7 @@ const User = db.User;
 const username = "admin";
 const password = "BiINPxSnYq4ygeRf";
 
-const uri = `mongodb+srv://${username}:${password}@cluster0.7fsul.mongodb.net/test`;
+const uri = `mongodb+srv://${username}:${password}@cluster0.7fsul.mongodb.net/shop`;
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect();
@@ -53,23 +53,24 @@ app.get('/', (req, res, next) => {
 app.post('/register', (req, res, next) => {
     var userBody = req.body;
 
-    // if (User.findOne({email: userBody.email})) {
-    //     throw 'Email "' + userBody.email + '" already taken!';
-    // }
+    User.countDocuments({ email: userBody.email }, function (err, count) {
+        if (count > 0) console.log("dup!")
+        else {
+            console.log("creating user");
 
-    console.log("creating user");
+            const user = new User(userBody);
+            console.log("user created");
 
-    const user = new User(userBody);
-    console.log("user created");
+            const hash = bcrypt.hashSync(userBody.password, 10);
+            console.log("hashed password");
 
-    const hash = bcrypt.hashSync(userBody.password, 10);
-    console.log("hashed password");
+            user.hash = hash;
+            console.log("added has to user");
 
-    user.hash = hash;
-    console.log("added has to user");
-
-    user.save();
-    console.log("user saved");
+            user.save();
+            console.log("user saved");
+        }
+    })
 
     res.sendFile(path.join(__dirname, 'views', 'Login.html'));
 

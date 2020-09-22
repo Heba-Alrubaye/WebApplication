@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const username = "admin";
 const password = "BiINPxSnYq4ygeRf";
 
-const uri = `mongodb+srv://${username}:${password}@cluster0.7fsul.mongodb.net/test`;
+const uri = `mongodb+srv://${username}:${password}@cluster0.7fsul.mongodb.net/shop`;
 
 const connectionOptions = { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false };
 mongoose.connect(uri, connectionOptions);
