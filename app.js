@@ -53,8 +53,8 @@ app.get('/', (req, res, next) => {
 app.post('/register', (req, res, next) => {
     var userBody = req.body;
 
-    User.countDocuments({ email: userBody.email }, function (err, count) {
-        if (count > 0) console.log("dup!")
+    User.countDocuments({ email: userBody.email }, async function (err, count) {
+        if (count > 0) console.log("user already exist!")
         else {
             console.log("creating user");
 
@@ -83,6 +83,34 @@ app.post('/register', (req, res, next) => {
 
 app.get('/login', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Login.html'))
+});
+
+app.post('/login', async (req, res, next) => {
+    var userBody = req.body;
+    const username = userBody.email;
+    const password = userBody.password;
+
+    console.log('email: ' + username + ' password: ' + password);
+
+    const user = await User.findOne({ email: username });
+    if (!user) {
+        console.log('user doesn\'t exist!');
+        return;
+    } else {
+        console.log('user name: ' + user.email + 'found in DB');
+    }
+    console.log('checking password');
+    if (bcrypt.compareSync(password, user.hash)) {
+        console.log('password matches');
+        // TODO: session
+        //const token = jwt.sign({ sub: user.id }, config.secret, { expiresIn: '7d' });
+        return {
+            ...user.toJSON(),
+            //token
+        };
+    } else {
+        console.log('password doesn\'t match');
+    }
 });
 
 app.get('/orders', (req, res, next) => {
