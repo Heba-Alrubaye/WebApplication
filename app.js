@@ -54,22 +54,27 @@ app.post('/register', (req, res, next) => {
     var userBody = req.body;
 
     User.countDocuments({ email: userBody.email }, async function (err, count) {
-        if (count > 0) console.log("user already exist!")
-        else {
-            console.log("creating user");
-
-            const user = new User(userBody);
-            console.log("user created");
-
-            const hash = bcrypt.hashSync(userBody.password, 10);
-            console.log("hashed password");
-
-            user.hash = hash;
-            console.log("added has to user");
-
-            user.save();
-            console.log("user saved");
+        try{
+            if (count > 0) console.log("user already exist!")
+            else {
+                console.log("creating user");
+    
+                const user = new User(userBody);
+                console.log("user created");
+    
+                const hash = bcrypt.hashSync(userBody.password, 10);
+                console.log("hashed password");
+    
+                user.hash = hash;
+                console.log("added has to user");
+    
+                user.save();
+                console.log("user saved");
+            }
+        }catch(err){
+            console.error(err);
         }
+
     })
 
     res.sendFile(path.join(__dirname, 'views', 'Login.html'));
