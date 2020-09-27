@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const db = require('./mongodb');
 const User = db.User;
