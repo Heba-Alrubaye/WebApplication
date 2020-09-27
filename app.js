@@ -108,12 +108,12 @@ app.post('/login', async (req, res, next) => {
     console.log('checking password');
     if (bcrypt.compareSync(password, user.hash)) {
         console.log('password matches');
-        // TODO: session
-        //const token = jwt.sign({ sub: user.id }, config.secret, { expiresIn: '7d' });
-        return {
-            ...user.toJSON(),
-            //token
-        };
+        const token = jwt.sign({ sub: user.id }, "placeholder secret", { expiresIn: '7d' });
+        console.log(token);
+        res.json({
+            username,
+            token
+        });
     } else {
         console.log('password doesn\'t match');
     }
