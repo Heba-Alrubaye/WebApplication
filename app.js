@@ -52,6 +52,11 @@ app.get('/edit', (req, res, next) => {
 });
 
 app.get('/', (req, res, next) => {
+    if (req.session.loggedin) {
+        console.log("User " + req.session.email + " is logged in!");
+    } else {
+        console.log("User is not logged in!");
+    }
     res.sendFile(path.join(__dirname, 'views', 'HomePage.html'));
 });
 
