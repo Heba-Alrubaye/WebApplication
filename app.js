@@ -97,6 +97,11 @@ app.post('/register', (req, res, next) => {
 });
 
 app.get('/login', (req, res, next) => {
+    if (req.session.loggedin) {
+        console.log("Already logged in as " + req.session.email + "!");
+        return res.status(400).json({message: "Already logged in as " + req.session.email + "!"});
+
+    }
     res.sendFile(path.join(__dirname, 'views', 'Login.html'))
 });
 
