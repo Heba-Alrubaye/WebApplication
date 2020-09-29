@@ -33,6 +33,8 @@ app.use(bodyParser.urlencoded({
     extended: true
 }))
 
+app.use(session({secret: 'OUR SECRET'}));
+
 app.get('/add-product', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
 });
