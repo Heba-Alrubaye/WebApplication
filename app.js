@@ -114,10 +114,10 @@ app.post('/login', async (req, res, next) => {
         console.log('password matches');
         const token = jwt.sign({ sub: user.id }, "placeholder secret", { expiresIn: '7d' });
         console.log(token);
-        res.json({
-            username,
-            token
-        });
+        req.session.loggedin=true;
+        req.session.email = user.email;
+        console.log("User logged in: " + req.session.loggedin);
+        res.redirect("/");
     } else {
         console.log('password doesn\'t match');
     }
