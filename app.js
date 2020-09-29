@@ -39,16 +39,23 @@ app.use(bodyParser.urlencoded({
 app.use(session({secret: 'OUR SECRET'}));
 
 
+
+
+app.get('/add-product', (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
+    // res.sendFile(path.join(__dirname, 'views', '/cart'));
+});
+
 app.post('/add-product', (req, res, next) => {
     console.log('it entered post');
     var productBody = req.body;
     const product = new Product(productBody); // this is modal object.
     console.log("product created");
     product.save()
-    .then((data)=> {
-        console.log(data);
+    .then((productBody)=> {
+        console.log(productBody);
         console.log("product saved");
-        res.redirect('/');
+        //res.redirect('/');
     })
     .catch((err)=> {
         console.log(err);
@@ -76,11 +83,6 @@ app.post('/add-product', (req, res, next) => {
 
     res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
 
-});
-
-app.get('/add-product', (req, res, next) => {
-    res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
-    // res.sendFile(path.join(__dirname, 'views', '/cart'));
 });
 
 app.get('/admin-products', (req, res, next) => {
@@ -177,6 +179,7 @@ app.post('/login', async (req, res, next) => {
         req.session.email = user.email;
         console.log("User logged in: " + req.session.loggedin);
         res.redirect("/");
+        // addProd;
     } else {
         console.log('password doesn\'t match');
     }
