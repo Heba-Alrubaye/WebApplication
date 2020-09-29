@@ -9,8 +9,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const db = require('./mongodb');
-const Products = require('./product.model');
+// const Products = require('./product.model');
 const User = db.User;
+const Product = db.Product;
+// const productCollection = db.collection('products')
 
 const username = "admin";
 const password = "BiINPxSnYq4ygeRf";
@@ -36,13 +38,59 @@ app.use(bodyParser.urlencoded({
 
 app.use(session({secret: 'OUR SECRET'}));
 
+
+app.post('/add-product', (req, res, next) => {
+    console.log('it entered post');
+    var productBody = req.body;
+    const product = new Product(productBody); // this is modal object.
+    console.log("product created");
+    product.save()
+    .then((data)=> {
+        console.log(data);
+        console.log("product saved");
+        res.redirect('/');
+    })
+    .catch((err)=> {
+        console.log(err);
+    })
+
+    // Product.countDocuments({ name: productBody.name, price: productBody.price }, async function (err, count) {
+    //     try{
+    //         if (count > 0) console.log("item already exist!")
+    //         else {
+    //             console.log("creating user");
+    
+    //             const product = new Product(productBody);
+    //             console.log("product created");
+    //             console.log(req.body);
+    
+    //             product.save();
+    //             console.log("product saved");
+    //             res.redirect('/');
+    //         }
+    //     }catch(err){
+    //         console.error(err);
+    //     }
+
+    // })
+
+    res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
+
+});
+
 app.get('/add-product', (req, res, next) => {
-    res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
+    res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
+    // res.sendFile(path.join(__dirname, 'views', '/cart'));
 });
 
 app.get('/admin-products', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
 });
+
+// app.get('/home', (req, res, next) => {
+//     res.sendFile(path.join(__dirname, 'views', 'HomePage.html'))
+//     res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
+// });
 
 app.get('/cart', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Cart.html'))
@@ -58,7 +106,7 @@ app.get('/', (req, res, next) => {
     } else {
         console.log("User is not logged in!");
     }
-    res.sendFile(path.join(__dirname, 'views', 'HomePage.html'));
+    res.sendFile(path.join(__dirname, 'views', 'HomePage.html')); //HomePage.html
 });
 
 app.post('/register', (req, res, next) => {
@@ -152,85 +200,96 @@ app.get('/register', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Signup.html'))
 });
 
-/**
- * The get request for product.
- */
-app.get('/add-product', (req, res, next) => {
-    console.log('get products!');
-    Products.find({}).then(eachOne =>{
-
-        res.json(eachOne);
-    })
 
 
-    // res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
-});
+// app.post('/add-product', (req, res) => {
+//     productCollection.insertOne(req.body)
+//       .then(result => {
+//         console.log(result)
+//         res.redirect('/AddProduct.html')
+//       })
+//       .catch(error => console.error(error))
+//   })
+
+// /**
+//  * The get request for product.
+//  */
+// app.get('/add-product', (req, res, next) => {
+//     console.log('get products!');
+//     Products.find({}).then(eachOne =>{
+
+//         res.json(eachOne);
+//     })
+
+
+//     // res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
+// });
 
 /**
  * post product to mongodb.
  */
-app.post('/adminProducts', (req, res, next) => {
-    Products.create({
-        id = req.body.id,
-        name = req.body.name,
-        price = req.body.prices
+// app.post('/adminProducts', (req, res, next) => {
+//     Products.create({
+//         id = req.body.id,
+//         name = req.body.name,
+//         price = req.body.prices
 
-    }).then(product =>{
-        res.json(product)
-    });
-});
+//     }).then(product =>{
+//         res.json(product)
+//     });
+// });
 
-/**
- * get product id
- */
-app.get('/add-product: id', (req, res, next) => {
-    Products.findById(req.params.id).then(function(err, product){
-        if(err){
-            res.send(err)
-        }
-        res.json(product)
-    })
-    // console.log('get products!');
-    // Products.find({}).then(eachOne =>{
+// /**
+//  * get product id
+//  */
+// app.get('/add-product: id', (req, res, next) => {
+//     Products.findById(req.params.id).then(function(err, product){
+//         if(err){
+//             res.send(err)
+//         }
+//         res.json(product)
+//     })
+//     // console.log('get products!');
+//     // Products.find({}).then(eachOne =>{
 
-    //     res.json(eachOne);
-    })
-
-
+//     //     res.json(eachOne);
+//     })
 
 
-    // res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
-// })
 
-/**
- * Update product
- */
-app.put('/add-product: id', function(req, res){
 
-    Products.findOneAndUpdate({
-        id = req.body.id,
-        name = req.body.name,
-        price = req.body.prices
+//     // res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
+// // })
 
-    }).then(product =>{
-        res.json(product)
-    });
-});
+// /**
+//  * Update product
+//  */
+// app.put('/add-product: id', function(req, res){
 
-/**
- * delete
- */
-app.delete('/add-product: id', function(req, res){
+//     Products.findOneAndUpdate({
+//         id = req.body.id,
+//         name = req.body.name,
+//         price = req.body.prices
 
-    Products.findOneAndRemove({
-        id = req.body.id,
-        name = req.body.name,
-        price = req.body.prices
+//     }).then(product =>{
+//         res.json(product)
+//     });
+// });
 
-    }).then(product =>{
-        res.json(product)
-    });
-});
+// /**
+//  * delete
+//  */
+// app.delete('/add-product: id', function(req, res){
+
+//     Products.findOneAndRemove({
+//         id = req.body.id,
+//         name = req.body.name,
+//         price = req.body.prices
+
+//     }).then(product =>{
+//         res.json(product)
+//     });
+// });
 
 
 
