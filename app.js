@@ -128,6 +128,16 @@ app.post('/login', async (req, res, next) => {
     }
 });
 
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return console.log(err);
+        }
+        console.log("User logged out!");
+        res.redirect('/');
+    });
+});
+
 app.get('/orders', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Orders.html'))
 });
