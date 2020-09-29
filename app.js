@@ -1,7 +1,7 @@
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
+// var cookieParser = require('cookie-parser');
 var session = require('express-session')
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -9,6 +9,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const db = require('./mongodb');
+const Products = require('./product.model');
 const User = db.User;
 
 const username = "admin";
@@ -151,9 +152,102 @@ app.get('/register', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Signup.html'))
 });
 
+/**
+ * The get request for product.
+ */
+app.get('/add-product', (req, res, next) => {
+    console.log('get products!');
+    Products.find({}).then(eachOne =>{
+
+        res.json(eachOne);
+    })
+
+
+    // res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
+});
+
+/**
+ * post product to mongodb.
+ */
+app.post('/adminProducts', (req, res, next) => {
+    Products.create({
+        id = req.body.id,
+        name = req.body.name,
+        price = req.body.prices
+
+    }).then(product =>{
+        res.json(product)
+    });
+});
+
+/**
+ * get product id
+ */
+app.get('/add-product: id', (req, res, next) => {
+    Products.findById(req.params.id).then(function(err, product){
+        if(err){
+            res.send(err)
+        }
+        res.json(product)
+    })
+    // console.log('get products!');
+    // Products.find({}).then(eachOne =>{
+
+    //     res.json(eachOne);
+    })
+
+
+
+
+    // res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
+// })
+
+/**
+ * Update product
+ */
+app.put('/add-product: id', function(req, res){
+
+    Products.findOneAndUpdate({
+        id = req.body.id,
+        name = req.body.name,
+        price = req.body.prices
+
+    }).then(product =>{
+        res.json(product)
+    });
+});
+
+/**
+ * delete
+ */
+app.delete('/add-product: id', function(req, res){
+
+    Products.findOneAndRemove({
+        id = req.body.id,
+        name = req.body.name,
+        price = req.body.prices
+
+    }).then(product =>{
+        res.json(product)
+    });
+});
+
+
+
 var port = process.env.PORT || 8000;
 console.log("Running on port: " + port);
 app.listen(port);
+
+
+
+
+
+
+
+
+
+
+
 
 // var createError = require('http-errors');
 // var express = require('express');
