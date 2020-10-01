@@ -12,6 +12,7 @@ const db = require('./mongodb');
 // const Products = require('./product.model');
 const User = db.User;
 const Product = db.Product;
+var urlencode = bodyParser.urlencoded({extended: false});
 // const productCollection = db.collection('products')
 
 const username = "admin";
@@ -87,6 +88,37 @@ app.get('/admin-products', async (req,res,next)=>{
     // res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
     res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
 })
+
+app.delete('/admin-products/:id', async (req, res, next) =>{
+    let prod = {_id:req.params.id}
+
+    // Product.remove({}).then(productBody =>{
+    //     console.log("Deleted all");
+    //     console.log(productBody);
+
+    // })
+
+    Product.remove(prod, function(err){
+        if(err){
+            console.log(err);
+        }
+        res.send('Deleted yay!')
+    });
+
+
+    // new Product({id: req.body.id}).destroy().then(function(result){
+    //    res.json(result.toJSON());
+    //    console.log(productBody);
+    //    console.log("done delete");
+    // }) 
+    res.sendFile(path.join(__dirname, 'views', 'Edit.html'))
+});
+
+
+
+
+
+
 
 app.get('/admin-products', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
