@@ -116,6 +116,31 @@ app.delete('/admin-products/:id', async (req, res, next) =>{
 
 
 
+/**
+ * Update product
+ */
+app.put('/edit:id', async (req, res, next) =>{
+    let prod = {_id:req.params.id}
+
+    Product.update(prod, function(err){
+        if(err){
+            console.log(err);
+        }
+        res.send('updated yay!')
+    });
+    // Products.findOneAndUpdate({
+    //     // id = req.body.id,
+    //     name = req.body.name,
+    //     price = req.body.prices
+
+    // }).then(product =>{
+    //     console.log("updated!");
+    //     res.json(product)
+    // });
+
+    res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
+
+});
 
 
 
@@ -237,94 +262,7 @@ app.get('/register', (req, res, next) => {
 
 
 
-// app.post('/add-product', (req, res) => {
-//     productCollection.insertOne(req.body)
-//       .then(result => {
-//         console.log(result)
-//         res.redirect('/AddProduct.html')
-//       })
-//       .catch(error => console.error(error))
-//   })
 
-// /**
-//  * The get request for product.
-//  */
-// app.get('/add-product', (req, res, next) => {
-//     console.log('get products!');
-//     Products.find({}).then(eachOne =>{
-
-//         res.json(eachOne);
-//     })
-
-
-//     // res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
-// });
-
-/**
- * post product to mongodb.
- */
-// app.post('/adminProducts', (req, res, next) => {
-//     Products.create({
-//         id = req.body.id,
-//         name = req.body.name,
-//         price = req.body.prices
-
-//     }).then(product =>{
-//         res.json(product)
-//     });
-// });
-
-// /**
-//  * get product id
-//  */
-// app.get('/add-product: id', (req, res, next) => {
-//     Products.findById(req.params.id).then(function(err, product){
-//         if(err){
-//             res.send(err)
-//         }
-//         res.json(product)
-//     })
-//     // console.log('get products!');
-//     // Products.find({}).then(eachOne =>{
-
-//     //     res.json(eachOne);
-//     })
-
-
-
-
-//     // res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
-// // })
-
-// /**
-//  * Update product
-//  */
-// app.put('/add-product: id', function(req, res){
-
-//     Products.findOneAndUpdate({
-//         id = req.body.id,
-//         name = req.body.name,
-//         price = req.body.prices
-
-//     }).then(product =>{
-//         res.json(product)
-//     });
-// });
-
-// /**
-//  * delete
-//  */
-// app.delete('/add-product: id', function(req, res){
-
-//     Products.findOneAndRemove({
-//         id = req.body.id,
-//         name = req.body.name,
-//         price = req.body.prices
-
-//     }).then(product =>{
-//         res.json(product)
-//     });
-// });
 
 
 
