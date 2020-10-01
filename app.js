@@ -46,6 +46,9 @@ app.get('/add-product', (req, res, next) => {
     // res.sendFile(path.join(__dirname, 'views', '/cart'));
 });
 
+/**
+ * Creates the product and adds it to the product collection in mongodb.
+ */
 app.post('/add-product', (req, res, next) => {
     console.log('it entered post');
     var productBody = req.body;
@@ -60,39 +63,36 @@ app.post('/add-product', (req, res, next) => {
     .catch((err)=> {
         console.log(err);
     })
-
-    // Product.countDocuments({ name: productBody.name, price: productBody.price }, async function (err, count) {
-    //     try{
-    //         if (count > 0) console.log("item already exist!")
-    //         else {
-    //             console.log("creating user");
-    
-    //             const product = new Product(productBody);
-    //             console.log("product created");
-    //             console.log(req.body);
-    
-    //             product.save();
-    //             console.log("product saved");
-    //             res.redirect('/');
-    //         }
-    //     }catch(err){
-    //         console.error(err);
-    //     }
-
-    // })
-
     res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
 
 });
+
+
+// })
+
+/**
+ * Get method for products.
+ */
+app.get('/admin-products', async (req,res,next)=>{
+    console.log('get products');
+    // var productBody = req.body;
+
+    Product.find({}).then(productBody =>{
+
+        // console.log(res.json(productBody));
+        console.log(productBody);
+    })
+    // console.log(productBody);
+
+    // res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
+    res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
+})
 
 app.get('/admin-products', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
 });
 
-// app.get('/home', (req, res, next) => {
-//     res.sendFile(path.join(__dirname, 'views', 'HomePage.html'))
-//     res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
-// });
+
 
 app.get('/cart', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Cart.html'))
