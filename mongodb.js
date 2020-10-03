@@ -11,8 +11,8 @@ mongoose.connect(uri, connectionOptions);
 mongoose.Promise = global.Promise;
 
 module.exports = {
-    User: require('./user.model'),
-    Product: require('./product.model')
+    User: require('./model/user'),
+    Product: require('./model/product')
 };
 
 
