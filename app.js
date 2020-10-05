@@ -39,9 +39,6 @@ app.use(bodyParser.urlencoded({
 
 app.use(session({secret: 'OUR SECRET'}));
 
-
-
-
 app.get('/add-product', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
     // res.sendFile(path.join(__dirname, 'views', '/cart'));
@@ -67,9 +64,6 @@ app.post('/add-product', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
 
 });
-
-
-// })
 
 /**
  * Get method for products.
@@ -142,14 +136,9 @@ app.put('/edit:id', async (req, res, next) =>{
 
 });
 
-
-
-
 app.get('/admin-products', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
 });
-
-
 
 app.get('/cart', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Cart.html'))
@@ -198,12 +187,6 @@ app.post('/register', (req, res, next) => {
     })
 
     res.sendFile(path.join(__dirname, 'views', 'Login.html'));
-
-    // const shop = client.db('shop');
-    // const users = shop.collection('users');
-    // users.insertOne(user, (err, result) => {
-    //     console.log('success');
-    // })
 });
 
 app.get('/login', (req, res, next) => {
@@ -244,6 +227,61 @@ app.post('/login', async (req, res, next) => {
     }
 });
 
+app.get('/reset', (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'views', 'ResetPassword.html'))
+});
+
+app.post('/reset', function(req, res, next) {
+    async.waterfall([
+      function(done) {
+        crypto.randomBytes(20, function(err, buf) {
+          var token = buf.toString('hex');
+          done(err, token);
+        });
+      },
+      function(token, done) {
+        User.findOne({ email: req.body.email }, function(err, user) {
+          if (!user) {
+            req.flash('error', 'No account with that email address exists.');
+            return res.redirect('/forgot');
+          }
+  
+          user.resetPasswordToken = token;
+          user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+  
+          user.save(function(err) {
+            done(err, token, user);
+          });
+        });
+      },
+      function(token, user, done) {
+        var smtpTransport = nodemailer.createTransport('SMTP', {
+          service: 'SendGrid',
+          auth: {
+            user: '!!! YOUR SENDGRID USERNAME !!!',
+            pass: '!!! YOUR SENDGRID PASSWORD !!!'
+          }
+        });
+        var mailOptions = {
+          to: user.email,
+          from: 'passwordreset@demo.com',
+          subject: 'Node.js Password Reset',
+          text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+            'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+            'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+            'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+        };
+        smtpTransport.sendMail(mailOptions, function(err) {
+          req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
+          done(err, 'done');
+        });
+      }
+    ], function(err) {
+      if (err) return next(err);
+      res.redirect('/forgot');
+    });
+  });
+
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -262,67 +300,6 @@ app.get('/register', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Signup.html'))
 });
 
-
-
-
-
-
-
 var port = process.env.PORT || 8000;
 console.log("Running on port: " + port);
 app.listen(port);
-
-
-
-
-
-
-
-
-
-
-
-
-// var createError = require('http-errors');
-// var express = require('express');
-// var path = require('path');
-// var cookieParser = require('cookie-parser');
-// var logger = require('morgan');
-
-// var indexRouter = require('./routes/index');
-// var usersRouter = require('./routes/users');
-// var authenticationRouter = require('./routes/authentication');
-
-// var app = express();
-
-// // view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
-
-// app.use(logger('dev'));
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
-// app.use(cookieParser());
-// app.use(express.static(path.join(__dirname, 'public')));
-
-// app.use('/', indexRouter);
-// app.use('/users', usersRouter);
-// app.use('/login', authenticationRouter);
-
-// // catch 404 and forward to error handler
-// app.use(function(req, res, next) {
-//   next(createError(404));
-// });
-
-// // error handler
-// app.use(function(err, req, res, next) {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-//   // render the error page
-//   res.status(err.status || 500);
-//   res.render('error');
-// });
-
-// module.exports = app;
