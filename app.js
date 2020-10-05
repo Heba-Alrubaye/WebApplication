@@ -170,6 +170,7 @@ app.get('/', (req, res, next) => {
 
 app.post('/register', (req, res, next) => {
     var userBody = req.body;
+    console.log(userBody);
 
     User.countDocuments({ email: userBody.email }, async function (err, count) {
         try{
@@ -179,7 +180,8 @@ app.post('/register', (req, res, next) => {
     
                 const user = new User(userBody);
                 console.log("user created");
-    
+                
+                console.log(userBody.email);
                 const hash = bcrypt.hashSync(userBody.password, 10);
                 console.log("hashed password");
     
@@ -220,7 +222,7 @@ app.post('/login', async (req, res, next) => {
 
     console.log('email: ' + username + ' password: ' + password);
 
-    const user = await User.findOne({ email: username });
+    const user = await User.findOne({ 'email': { $in: [username]} }); // prevents NOSQL injection
     if (!user) {
         console.log('user doesn\'t exist!');
         return;
