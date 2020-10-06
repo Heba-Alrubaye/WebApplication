@@ -73,17 +73,12 @@ app.post('/add-product', (req, res, next) => {
  */
 app.get('/admin-products', async (req, res, next) => {
     console.log('get products');
-    // var productBody = req.body;
 
     Product.find({}).then(productBody => {
 
-        // console.log(res.json(productBody));
         console.log(productBody);
+        res.render("AdminProducts.ejs", {products: productBody});
     })
-    // console.log(productBody);
-
-    // res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'))
-    res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
 })
 
 app.delete('/admin-products/:id', async (req, res, next) => {
