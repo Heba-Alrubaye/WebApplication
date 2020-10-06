@@ -7,12 +7,15 @@ var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+var async = require('async');
+var nodemailer = require('nodemailer');
+var crypto = require('crypto');
 
 const db = require('./mongodb');
 // const Products = require('./product.model');
 const User = db.User;
 const Product = db.Product;
-var urlencode = bodyParser.urlencoded({extended: false});
+var urlencode = bodyParser.urlencoded({ extended: false });
 // const productCollection = db.collection('products')
 
 const username = "admin";
@@ -37,7 +40,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }))
 
-app.use(session({secret: 'OUR SECRET'}));
+app.use(session({ secret: 'OUR SECRET' }));
 
 app.get('/add-product', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
@@ -53,14 +56,14 @@ app.post('/add-product', (req, res, next) => {
     const product = new Product(productBody); // this is modal object.
     console.log("product created");
     product.save()
-    .then((productBody)=> {
-        console.log(productBody);
-        console.log("product saved");
-        //res.redirect('/');
-    })
-    .catch((err)=> {
-        console.log(err);
-    })
+        .then((productBody) => {
+            console.log(productBody);
+            console.log("product saved");
+            //res.redirect('/');
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
 
 });
@@ -68,11 +71,11 @@ app.post('/add-product', (req, res, next) => {
 /**
  * Get method for products.
  */
-app.get('/admin-products', async (req,res,next)=>{
+app.get('/admin-products', async (req, res, next) => {
     console.log('get products');
     // var productBody = req.body;
 
-    Product.find({}).then(productBody =>{
+    Product.find({}).then(productBody => {
 
         // console.log(res.json(productBody));
         console.log(productBody);
@@ -83,8 +86,8 @@ app.get('/admin-products', async (req,res,next)=>{
     res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
 })
 
-app.delete('/admin-products/:id', async (req, res, next) =>{
-    let prod = {_id:req.params.id}
+app.delete('/admin-products/:id', async (req, res, next) => {
+    let prod = { _id: req.params.id }
 
     // Product.remove({}).then(productBody =>{
     //     console.log("Deleted all");
@@ -92,8 +95,8 @@ app.delete('/admin-products/:id', async (req, res, next) =>{
 
     // })
 
-    Product.remove(prod, function(err){
-        if(err){
+    Product.remove(prod, function (err) {
+        if (err) {
             console.log(err);
         }
         res.send('Deleted yay!')
@@ -113,11 +116,11 @@ app.delete('/admin-products/:id', async (req, res, next) =>{
 /**
  * Update product
  */
-app.put('/edit:id', async (req, res, next) =>{
-    let prod = {_id:req.params.id}
+app.put('/edit:id', async (req, res, next) => {
+    let prod = { _id: req.params.id }
 
-    Product.update(prod, function(err){
-        if(err){
+    Product.update(prod, function (err) {
+        if (err) {
             console.log(err);
         }
         res.send('updated yay!')
@@ -162,25 +165,25 @@ app.post('/register', (req, res, next) => {
     console.log(userBody);
 
     User.countDocuments({ email: userBody.email }, async function (err, count) {
-        try{
+        try {
             if (count > 0) console.log("user already exist!")
             else {
                 console.log("creating user");
-    
+
                 const user = new User(userBody);
                 console.log("user created");
-                
+
                 console.log(userBody.email);
                 const hash = bcrypt.hashSync(userBody.password, 10);
                 console.log("hashed password");
-    
+
                 user.hash = hash;
                 console.log("added has to user");
-    
+
                 user.save();
                 console.log("user saved");
             }
-        }catch(err){
+        } catch (err) {
             console.error(err);
         }
 
@@ -192,7 +195,7 @@ app.post('/register', (req, res, next) => {
 app.get('/login', (req, res, next) => {
     if (req.session.loggedin) {
         console.log("Already logged in as " + req.session.email + "!");
-        return res.status(400).json({message: "Already logged in as " + req.session.email + "!"});
+        return res.status(400).json({ message: "Already logged in as " + req.session.email + "!" });
 
     }
     res.sendFile(path.join(__dirname, 'views', 'Login.html'))
@@ -205,7 +208,7 @@ app.post('/login', async (req, res, next) => {
 
     console.log('email: ' + username + ' password: ' + password);
 
-    const user = await User.findOne({ 'email': { $in: [username]} }); // prevents NOSQL injection
+    const user = await User.findOne({ 'email': { $in: [username] } }); // prevents NOSQL injection
     if (!user) {
         console.log('user doesn\'t exist!');
         return;
@@ -217,7 +220,7 @@ app.post('/login', async (req, res, next) => {
         console.log('password matches');
         const token = jwt.sign({ sub: user.id }, "placeholder secret", { expiresIn: '7d' });
         console.log(token);
-        req.session.loggedin=true;
+        req.session.loggedin = true;
         req.session.email = user.email;
         console.log("User logged in: " + req.session.loggedin);
         res.redirect("/");
@@ -227,60 +230,107 @@ app.post('/login', async (req, res, next) => {
     }
 });
 
-app.get('/reset', (req, res, next) => {
+app.get('/forgot', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'ResetPassword.html'))
 });
 
-app.post('/reset', function(req, res, next) {
+app.post('/forgot', function (req, res, next) {
     async.waterfall([
-      function(done) {
-        crypto.randomBytes(20, function(err, buf) {
-          var token = buf.toString('hex');
-          done(err, token);
-        });
-      },
-      function(token, done) {
-        User.findOne({ email: req.body.email }, function(err, user) {
-          if (!user) {
-            req.flash('error', 'No account with that email address exists.');
-            return res.redirect('/forgot');
-          }
-  
-          user.resetPasswordToken = token;
-          user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-  
-          user.save(function(err) {
-            done(err, token, user);
-          });
-        });
-      },
-      function(token, user, done) {
-        var smtpTransport = nodemailer.createTransport('SMTP', {
-          service: 'SendGrid',
-          auth: {
-            user: '!!! YOUR SENDGRID USERNAME !!!',
-            pass: '!!! YOUR SENDGRID PASSWORD !!!'
-          }
-        });
-        var mailOptions = {
-          to: user.email,
-          from: 'passwordreset@demo.com',
-          subject: 'Node.js Password Reset',
-          text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-            'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-            'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-            'If you did not request this, please ignore this email and your password will remain unchanged.\n'
-        };
-        smtpTransport.sendMail(mailOptions, function(err) {
-          req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
-          done(err, 'done');
-        });
-      }
-    ], function(err) {
-      if (err) return next(err);
-      res.redirect('/forgot');
+        function (done) {
+            crypto.randomBytes(20, function (err, buf) {
+                var token = buf.toString('hex');
+                done(err, token);
+            });
+        },
+        function (token, done) {
+            User.findOne({ email: req.body.email }, function (err, user) {
+                // if (!user) {
+                //     req.flash('error', 'No account with that email address exists.');
+                //     return res.redirect('/forgot');
+                // }
+                user.resetPasswordToken = token;
+                user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+                console.log("saved")
+                user.save(function (err) {
+                    done(err, token, user);
+                });
+            });
+        },
+        function (token, user, done) {
+            var smtpTransport = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 465,
+                secure: true, // true for 465, false for other ports
+                auth: {
+                    user: 'nwen304groupproject@gmail.com',
+                    pass: "qGDq6njmdUxWS72H"
+                },
+                tls: {
+                    rejectUnauthorized: false
+                }
+            });
+            var mailOptions = {
+                from: '"NWEN304 Group Project" <nwen304groupproject@gmail.com>', // sender address
+                to: user.email, // list of receivers
+                subject: 'Password Reset', // subject line
+                text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+                    'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+                    'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+                    'If you did not request this, please ignore this email and your password will remain unchanged.\n' // plain text body
+            };
+            smtpTransport.sendMail(mailOptions, function (err) {
+                req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
+                done(err, 'done');
+            });
+        }
+    ], function (err) {
+        if (err) return next(err);
+        res.redirect('/forgot');
     });
-  });
+});
+
+app.get('/reset/:token', function (req, res) {
+    User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function (err, user) {
+        // if (!user) {
+        //     req.flash('error', 'Password reset token is invalid or has expired.');
+        //     return res.redirect('/reset');
+        // }
+        res.render('game', {token: req.params.token})
+        // res.sendFile(path.join(__dirname, 'views', 'ChangePassword.html'))
+    });
+});
+
+app.post('/reset/:token', function (req, res) {
+    async.waterfall([
+        function (done) {
+            console.log(req.params.token)
+            User.findOne({ resetPasswordToken: req.params.token }, function (err, user) { //  resetPasswordExpires: { $gt: Date.now() }
+                // if (!user) {
+                //   req.flash('error', 'Password reset token is invalid or has expired.');
+                //   return res.redirect('back');
+                // }
+                console.log(user)
+                console.log(req.body.password);
+                const hash = bcrypt.hashSync(req.body.password, 10);
+                console.log(hash);
+                user.hash = hash;
+                user.resetPasswordToken = undefined;
+                user.resetPasswordExpires = undefined;
+
+                user.save();
+
+                // user.save(function (err) {
+                //     req.logIn(user, function (err) {
+                //         done(err, user);
+                //     });
+                // });
+            });
+        }
+    ], function (err) {
+        res.redirect('/');
+    });
+});
 
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
