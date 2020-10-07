@@ -36,6 +36,17 @@
   <link href="../public/stylesheets/home.css" rel="stylesheet">
 </head>
 
+<script>
+  function removeItem(id) {
+    console.log("removeItem: " + id);
+    var url = "/admin-products/" + id;
+    var xrq = new XMLHttpRequest();
+    xrq.timeout = 10000;
+    xrq.open("DELETE", url, true);
+    xrq.send();
+  }
+</script>
+
 <body class="text-center">
   <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
     <header class="masthead mb-auto">
@@ -70,7 +81,7 @@
 
           <div class="row">
             <% for(var i=0; i < products.length; i++) { %>
-              <div class="col-md-4">
+              <div class="col-md-4" id="<%= products[i]._id %>">
                 <div class="card mb-4 shadow-sm">
                   <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
                     xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img"
@@ -88,7 +99,7 @@
                       <div class="btn-group">
                         <a class="btn btn-sm btn-outline-secondary" type="button" href="Edit.html" role="button"
                           class="btn btn-sm btn-outline-secondary">Edit</a>
-                        <button style="color:red" type="button" class="btn btn-sm btn-outline-secondary">Delete</button>
+                          <button id='<%= products[i]._id %>' style="color:red" type="button" onclick='removeItem(id)' class="btn btn-sm btn-outline-secondary">Delete</button>
                       </div>
                     </div>
                   </div>
