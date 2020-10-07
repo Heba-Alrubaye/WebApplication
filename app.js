@@ -76,34 +76,25 @@ app.get('/admin-products', async (req, res, next) => {
 
     Product.find({}).then(productBody => {
 
-        console.log(productBody);
+        //console.log(productBody);
         res.render("AdminProducts.ejs", {products: productBody});
     })
 })
 
-app.delete('/admin-products/:id', async (req, res, next) => {
+app.delete('/admin-products/:id', (req, res, next) => {
+    console.log("delete called");
     let prod = { _id: req.params.id }
 
-    // Product.remove({}).then(productBody =>{
-    //     console.log("Deleted all");
-    //     console.log(productBody);
+    console.log("Requested deletion of item " + prod._id);
 
-    // })
-
-    Product.remove(prod, function (err) {
+    Product.deleteOne(prod, function (err) {
         if (err) {
             console.log(err);
         }
-        res.send('Deleted yay!')
+        console.log('Deleted item!');
+        req.method = "GET";
+        res.redirect("/admin-products");
     });
-
-
-    // new Product({id: req.body.id}).destroy().then(function(result){
-    //    res.json(result.toJSON());
-    //    console.log(productBody);
-    //    console.log("done delete");
-    // }) 
-    res.sendFile(path.join(__dirname, 'views', 'Edit.html'))
 });
 
 
