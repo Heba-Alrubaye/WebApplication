@@ -133,6 +133,27 @@ app.get('/cart', async (req, res, next) => {
     })
 });
 
+/**
+ * delete method for cart products.
+ */
+app.delete('/cart/:id', (req, res, next) => {
+    console.log("delete called");
+    let prod = { _id: req.params.id }
+
+    console.log("Delete " + prod._id);
+    Cart.deleteOne(prod, function (err) {
+        if (err) {
+            console.log(err);
+        }
+        console.log('Cart product has been deleted!');
+        req.method = "GET";
+        // res.sendFile(path.join(__dirname, '/cart'));
+        res.sendFile(path.join(__dirname, 'views', 'Cart.html'));
+
+
+    });
+});
+
 
 
 /**
@@ -165,42 +186,6 @@ app.delete('/admin-products/:id', (req, res, next) => {
 
     });
 });
-
-// app.delete('/carts/:id', (req, res, next) => {
-//     console.log("delete called");
-//     let prod = { _id: req.params.id }
-
-//     console.log("Requested deletion of item " + prod._id);
-
-//     Product.deleteOne(prod, function (err) {
-//         if (err) {
-//             console.log(err);
-//         }
-//         console.log('Deleted item!');
-//         req.method = "GET";
-//         // res.redirect("/admin-products");
-//         res.sendFile(path.join(__dirname, '/carts'));
-
-//     });
-// });
-
-// app.delete('/cart/:id', (req, res, next) => {
-//     console.log("delete called");
-//     let prod = { _id: req.params.id }
-
-//     console.log("Requested deletion of item " + prod._id);
-
-//     Product.deleteOne(prod, function (err) {
-//         if (err) {
-//             console.log(err);
-//         }
-//         console.log('Deleted item!');
-//         req.method = "GET";
-//         // res.redirect("/admin-products");
-//         res.sendFile(path.join(__dirname, '/cart'));
-
-//     });
-// });
 
 app.delete('/home-product/:id', (req, res, next) => {
     console.log("delete called");
