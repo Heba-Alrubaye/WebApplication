@@ -87,11 +87,20 @@
                       <%= "Price: " + products[i].price %>
                     </p>
                     <div class="d-flex justify-content-between align-items-center">
-                      <!-- <div class="btn-group">
-                        <a class="btn btn-sm btn-outline-secondary" type="button" href="/views/Edit.html" role="button"
-                          class="btn btn-sm btn-outline-secondary">Edit</a>
-                          <button id='<%= products[i]._id %>' style="color:red" type="button" onclick='removeItem(id)' class="btn btn-sm btn-outline-secondary">Delete</button>
-                      </div> -->
+                      <div class="btn-group">
+                        <a type="button" class="btn btn-sm btn-outline-secondary">Details</a>
+                        <form action="/add-cart" method="POST" >
+                          <!-- <input type="text" placeholder="name" name="name"><br>
+                           <label> Price</label> -->
+                          <!-- <input type="text" placeholder="price" name="price"><br> --> 
+                          <button type="submit" class="btn btn-sm btn-outline-secondary">Add To Cart</button> 
+                          <!-- <button type="submit" class="btn btn-primary">Favorite</button> -->
+                      </form>
+                        <!-- <a type="button" class="btn btn-sm btn-outline-secondary" href="/add-cart" >Add To Cart</a>  -->
+                        <!-- <a class="btn btn-sm btn-outline-secondary" type="button" href=/views/Cart.html" role="button"
+                          class="btn btn-sm btn-outline-secondary">Edit</a> -->
+                          <!-- <button id='<%= products[i]._id %>' style="color:red" type="button" onclick='removeItem(id)' class="btn btn-sm btn-outline-secondary">Delete</button> -->
+                      </div> 
                     </div>
                   </div>
                 </div>

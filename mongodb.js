@@ -12,7 +12,8 @@ mongoose.Promise = global.Promise;
 
 module.exports = {
     User: require('./model/user'),
-    Product: require('./model/product')
+    Product: require('./model/product'),
+    Cart: require('./model/cart')
 };
 
 
@@ -49,6 +50,7 @@ async function listDatabases(client) {
 
 async function fetchShop(client) {
     const shop = await client.db('shop');
+    const carts = shop.collection('carts');
     const orders = shop.collection('orders');
     const products = shop.collection('products');
     const sessions = shop.collection('sessions');

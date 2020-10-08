@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+/**
+ * Product schema for the collection in mongodb.
+ */
 const productSchema = new Schema({
     // productId: { type: Number, required: true },
     name: { type: String, required: true },
