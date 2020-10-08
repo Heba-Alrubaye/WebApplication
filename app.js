@@ -87,6 +87,19 @@ app.post('/add-product', (req, res, next) => {
 /**
  * Get method for products.
  */
+app.get('/cart', async (req, res, next) => {
+    console.log('get products');
+
+    Product.find({}).then(productBody => {
+
+        //console.log(productBody);
+        res.render("Cart.ejs", {products: productBody});
+    })
+});
+
+/**
+ * Get method for products.
+ */
 app.get('/admin-products', async (req, res, next) => {
     console.log('get products');
 
@@ -115,6 +128,24 @@ app.delete('/admin-products/:id', (req, res, next) => {
     });
 });
 
+// app.delete('/cart/:id', (req, res, next) => {
+//     console.log("delete called");
+//     let prod = { _id: req.params.id }
+
+//     console.log("Requested deletion of item " + prod._id);
+
+//     Product.deleteOne(prod, function (err) {
+//         if (err) {
+//             console.log(err);
+//         }
+//         console.log('Deleted item!');
+//         req.method = "GET";
+//         // res.redirect("/admin-products");
+//         res.sendFile(path.join(__dirname, '/cart'));
+
+//     });
+// });
+
 app.delete('/home-prdouct/:id', (req, res, next) => {
     console.log("delete called");
     let prod = { _id: req.params.id }
@@ -133,7 +164,40 @@ app.delete('/home-prdouct/:id', (req, res, next) => {
     });
 });
 
+/**
+ * Update product
+ */
+app.delete('/cart/:id', async (req, res, next) => {
+    console.log("Called cart PUT");
+    var productBody = req.body;
+    console.log(req.params.id);
+    console.log(productBody);
+    let prod = {
+         name: productBody.name, 
+         price: productBody.price
+    };
 
+    Product.deleteOne({_id: req.params.id}, prod, function (err) {
+        if (err) {
+            console.log(err);
+        }
+        console.log('Product updated');
+    });
+
+    
+    // Products.findOneAndUpdate({
+    //     // id = req.body.id,
+    //     name = req.body.name,
+    //     price = req.body.prices
+
+    // }).then(product =>{
+    //     console.log("updated!");
+    //     res.json(product)
+    // });
+
+    res.redirect("/admin-products");
+
+});
 
 /**
  * Update product
@@ -154,6 +218,8 @@ app.post('/edit/:id', async (req, res, next) => {
         }
         console.log('Product updated');
     });
+
+    
     // Products.findOneAndUpdate({
     //     // id = req.body.id,
     //     name = req.body.name,
