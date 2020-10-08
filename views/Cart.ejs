@@ -39,7 +39,7 @@
 <script>
   function removeItem(id) {
     console.log("removeItem: " + id);
-    var url = "/admin-products/" + id;
+    var url = "/cart/" + id;
     var xrq = new XMLHttpRequest();
     xrq.timeout = 10000;
     xrq.open("DELETE", url, true);
@@ -65,24 +65,13 @@
 
 
     <main role="main" class="inner cover">
-      <!-- <button action="/admin-products" type="submit">delete Product</button> -->
-      <!-- <br>
-      <br>
-      <form action="/admin-products" method="GET">
-         <label> Name</label> -->
-        <!-- <input type="text" placeholder="name" name="name"><br> -->
-        <!-- <label> Price</label> -->
-        <!-- <input type="text" placeholder="price" name="price"><br> -->
-        <!-- <button  type="submit">get Product</button>
-      </form>    
-      <br> --> 
 
       <div>
         <div class="container">
 
           <div class="row">
-            <% for(var i=0; i < products.length; i++) { %>
-              <div class="col-md-4" id="<%= products[i]._id %>">
+            <% for(var i=0; i < carts.length; i++) { %>
+              <div class="col-md-4" id="<%= carts[i]._id %>">
                 <div class="card mb-4 shadow-sm">
                   <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
                     xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img"
@@ -93,13 +82,13 @@
                   </svg>
                   <div class="card-body">
                     <p class="card-text">
-                      <%= "Name: " + products[i].name %><br>
-                      <%= "Price: " + products[i].price %>
+                      <%= "Name: " + carts[i].name %><br>
+                      <%= "Price: " + carts[i].price %>
                     </p>
                     <div class="d-flex justify-content-between align-items-center">
                       <div class="btn-group">
-                        <a class="btn btn-sm btn-outline-secondary" type="button" href="Edit.html" role="button"
-                          class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <!-- <a class="btn btn-sm btn-outline-secondary" type="button" href="Edit.html" role="button"
+                          class="btn btn-sm btn-outline-secondary">Edit</a> -->
                           <button id='<%= products[i]._id %>' style="color:red" type="button" onclick='removeItem(id)' class="btn btn-sm btn-outline-secondary">Delete</button>
                       </div>
                     </div>

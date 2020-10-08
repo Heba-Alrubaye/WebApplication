@@ -87,11 +87,13 @@
                       <%= "Price: " + products[i].price %>
                     </p>
                     <div class="d-flex justify-content-between align-items-center">
-                      <!-- <div class="btn-group">
-                        <a class="btn btn-sm btn-outline-secondary" type="button" href="/views/Edit.html" role="button"
-                          class="btn btn-sm btn-outline-secondary">Edit</a>
-                          <button id='<%= products[i]._id %>' style="color:red" type="button" onclick='removeItem(id)' class="btn btn-sm btn-outline-secondary">Delete</button>
-                      </div> -->
+                      <div class="btn-group">
+                        <a type="button" class="btn btn-sm btn-outline-secondary">Details</a>
+                        <a type="button" class="btn btn-sm btn-outline-secondary" href="/add-cart" >Add To Cart</a> 
+                        <!-- <a class="btn btn-sm btn-outline-secondary" type="button" href=/views/Cart.html" role="button"
+                          class="btn btn-sm btn-outline-secondary">Edit</a> -->
+                          <!-- <button id='<%= products[i]._id %>' style="color:red" type="button" onclick='removeItem(id)' class="btn btn-sm btn-outline-secondary">Delete</button> -->
+                      </div> 
                     </div>
                   </div>
                 </div>
