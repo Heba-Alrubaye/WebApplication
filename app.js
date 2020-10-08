@@ -91,7 +91,34 @@ app.post('/add-product', (req, res, next) => {
 /**
  * Creates the product and adds it to the cart collection in mongodb.
  */
+app.post('/add-cart',  (req, res, next) => {
+    console.log('it entered post');
+    const { name, price } = req.body;
 
+    var cartProductBody = req.body;
+    const cartProduct = new Cart(cartProductBody); // this is modal object.
+    console.log("cart product created");
+    // const newCart = await Cart.create({
+    //     // userId,
+    //     cartProds: [{ name, price }]
+    //   });
+    //   return res.status(201).send(newCart);
+    cartProduct.save()
+        .then((cartProductBody) => {
+            console.log(cartProductBody);
+            console.log("cart product saved");
+            // res.render("Cart.ejs", {carts: cartProductBody});
+            //res.redirect('/');
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    res.sendFile(path.join(__dirname, 'views', 'HomePage.html'));
+
+    // res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
+    // res.sendFile(path.join(__dirname, 'views', 'HomePage.html'));
+
+});
 
 /**
  * Get method for products.
@@ -106,12 +133,7 @@ app.get('/cart', async (req, res, next) => {
     })
 });
 
-// Product.one{_id: req.params.id}, prod, function (err) {
-//     if (err) {
-//         console.log(err);
-//     }
-//     console.log('Product updated');
-// });
+
 
 /**
  * Get method for products.
@@ -143,6 +165,24 @@ app.delete('/admin-products/:id', (req, res, next) => {
 
     });
 });
+
+// app.delete('/carts/:id', (req, res, next) => {
+//     console.log("delete called");
+//     let prod = { _id: req.params.id }
+
+//     console.log("Requested deletion of item " + prod._id);
+
+//     Product.deleteOne(prod, function (err) {
+//         if (err) {
+//             console.log(err);
+//         }
+//         console.log('Deleted item!');
+//         req.method = "GET";
+//         // res.redirect("/admin-products");
+//         res.sendFile(path.join(__dirname, '/carts'));
+
+//     });
+// });
 
 // app.delete('/cart/:id', (req, res, next) => {
 //     console.log("delete called");

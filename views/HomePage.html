@@ -121,7 +121,14 @@
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
                       <a type="button" class="btn btn-sm btn-outline-secondary">Details</a>
-                      <a type="button" class="btn btn-sm btn-outline-secondary">Add To Cart</a>
+                      <form action="/add-cart" method="POST" >
+                        <!-- <input type="text" placeholder="name" name="name"><br>
+                         <label> Price</label> -->
+                        <!-- <input type="text" placeholder="price" name="price"><br> --> 
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Add To Cart</button> 
+                        <!-- <button type="submit" class="btn btn-primary">Favorite</button> -->
+                    </form>
+                      <!-- <a type="button" class="btn btn-sm btn-outline-secondary">Add To Cart</a> -->
                     </div>
 
                   </div>
@@ -192,7 +199,10 @@
                           <button style="color:red" type="button" class="btn btn-sm btn-outline-secondary">Delete</button> -->
 
                           <a type="button" class="btn btn-sm btn-outline-secondary">Details</a>
-                          <a type="button" class="btn btn-sm btn-outline-secondary" href="/cart" role="button">Add To Cart</a> 
+                          <form method="POST" action="add-cart">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" role="button">Add To Cart</button> 
+                            <!-- <button type="submit" class="btn btn-primary">Favorite</button> -->
+                        </form>
                     </div>
 
                   </div>
