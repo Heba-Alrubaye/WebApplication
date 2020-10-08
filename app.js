@@ -165,6 +165,7 @@ app.get('/admin-products', async (req, res, next) => {
     Product.find({}).then(productBody => {
 
         //console.log(productBody);
+        
         res.render("AdminProducts.ejs", {products: productBody});
     })
 })
@@ -172,6 +173,7 @@ app.get('/admin-products', async (req, res, next) => {
 app.delete('/admin-products/:id', (req, res, next) => {
     console.log("delete called");
     let prod = { _id: req.params.id }
+
 
     console.log("Requested deletion of item " + prod._id);
 
@@ -182,6 +184,7 @@ app.delete('/admin-products/:id', (req, res, next) => {
         console.log('Deleted item!');
         req.method = "GET";
         // res.redirect("/admin-products");
+        // req.session.cartProduct = cart.cartProduct;  
         res.sendFile(path.join(__dirname, '/admin-products'));
 
     });
