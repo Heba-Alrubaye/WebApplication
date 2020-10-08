@@ -299,7 +299,7 @@ app.get('/', (req, res, next) => {
     } else {
         console.log("User is not logged in!");
     }
-    res.sendFile(path.join(__dirname, 'views', 'HomePage.html')); //HomePage.html
+    res.sendFile(path.join(__dirname, 'views', 'Login.html')); //HomePage.html
 });
 
 
