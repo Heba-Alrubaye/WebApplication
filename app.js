@@ -12,13 +12,11 @@ var nodemailer = require('nodemailer');
 var crypto = require('crypto');
 
 const db = require('./mongodb');
-// const Products = require('./product.model');
 const User = db.User;
 const Product = db.Product;
 const Cart = db.Cart;
 
 var urlencode = bodyParser.urlencoded({ extended: false });
-// const productCollection = db.collection('products')
 
 const username = "admin";
 const password = "BiINPxSnYq4ygeRf";
@@ -44,8 +42,12 @@ app.use(bodyParser.urlencoded({
     extended: true
 }))
 
+//setting the secret for the session.
 app.use(session({ secret: 'OUR SECRET' }));
 
+/**
+ * get method for the add product page.
+ */
 app.get('/add-product', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
     // res.sendFile(path.join(__dirname, 'views', '/cart'));
@@ -55,7 +57,9 @@ app.get('/add-product', (req, res, next) => {
 
 
 /**
- * Get method for products.
+ * Get method for products. 
+ * This method gets the products from the products collection, so it can be 
+ * displayed on the home page.
  */
 app.get('/home-product', async (req, res, next) => {
     console.log('get products');
@@ -66,6 +70,8 @@ app.get('/home-product', async (req, res, next) => {
         res.render("HomePage.ejs", {products: productBody});
     })
 })
+
+
 /**
  * Creates the product and adds it to the product collection in mongodb.
  */
@@ -88,6 +94,7 @@ app.post('/add-product', (req, res, next) => {
 
 });
 
+
 /**
  * Creates the product and adds it to the cart collection in mongodb.
  */
@@ -98,30 +105,26 @@ app.post('/add-cart',  (req, res, next) => {
     var cartProductBody = req.body;
     const cartProduct = new Cart(cartProductBody); // this is modal object.
     console.log("cart product created");
-    // const newCart = await Cart.create({
-    //     // userId,
-    //     cartProds: [{ name, price }]
-    //   });
-    //   return res.status(201).send(newCart);
+
     cartProduct.save()
         .then((cartProductBody) => {
             console.log(cartProductBody);
             console.log("cart product saved");
-            // res.render("Cart.ejs", {carts: cartProductBody});
-            //res.redirect('/');
+ 
         })
         .catch((err) => {
             console.log(err);
         })
     res.sendFile(path.join(__dirname, 'views', 'HomePage.html'));
 
-    // res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
-    // res.sendFile(path.join(__dirname, 'views', 'HomePage.html'));
 
 });
 
+
 /**
- * Get method for products.
+ * Get method for cart products. 
+ * This method gets the products from the cart collection, so it can be 
+ * displayed on the cart page.
  */
 app.get('/cart', async (req, res, next) => {
     console.log('get cart products');
@@ -133,8 +136,11 @@ app.get('/cart', async (req, res, next) => {
     })
 });
 
+
 /**
- * delete method for cart products.
+ * delete method for cart products. 
+ * This method deletes the product off the cart page as well as the 
+ * cart collection in mongodb.
  */
 app.delete('/cart/:id', (req, res, next) => {
     console.log("delete called");
@@ -157,7 +163,9 @@ app.delete('/cart/:id', (req, res, next) => {
 
 
 /**
- * Get method for products.
+  * Get method for products. 
+ * This method gets the products from the products collection, so it can be 
+ * displayed on the admin page.
  */
 app.get('/admin-products', async (req, res, next) => {
     console.log('get products');
@@ -170,6 +178,12 @@ app.get('/admin-products', async (req, res, next) => {
     })
 })
 
+
+/**
+ * delete method for admin products. 
+ * This method deletes the product off the admin page as well as the 
+ * products collection in mongodb.
+ */
 app.delete('/admin-products/:id', (req, res, next) => {
     console.log("delete called");
     let prod = { _id: req.params.id }
@@ -190,6 +204,9 @@ app.delete('/admin-products/:id', (req, res, next) => {
     });
 });
 
+/**
+ * 
+ */
 app.delete('/home-product/:id', (req, res, next) => {
     console.log("delete called");
     let prod = { _id: req.params.id }
@@ -211,7 +228,10 @@ app.delete('/home-product/:id', (req, res, next) => {
 
 
 /**
- * Update product
+ * Update product.
+ * This method will update the selected product in a seperate page
+ * and it will then update it in the products collection in mongodb.
+ * The update will be shown on the page.
  */
 app.post('/edit/:id', async (req, res, next) => {
     console.log("Called edit PUT");
@@ -230,39 +250,49 @@ app.post('/edit/:id', async (req, res, next) => {
         console.log('Product updated');
     });
 
-    
-    // Products.findOneAndUpdate({
-    //     // id = req.body.id,
-    //     name = req.body.name,
-    //     price = req.body.prices
-
-    // }).then(product =>{
-    //     console.log("updated!");
-    //     res.json(product)
-    // });
 
     res.redirect("/admin-products");
 
 });
 
+
+/**
+ * Get the admin products page.
+ */
 app.get('/admin-products', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
 });
 
+
+/**
+ * get the home page.
+ */
 app.get('/home-product', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'HomePage.html'));
     // res.sendFile(path.join(__dirname, 'views', '/cart'));
 });
 
+
+/**
+ * get the cart page.
+ */
 app.get('/cart', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Cart.html'))
 });
 
+
+/**
+ * get the edit page for the selected product.
+ */
 app.get('/edit/:id', (req, res, next) => {
     let id = req.params.id;
     res.render("Edit.ejs", {id: id});
 });
 
+
+/**
+ * direct to the home page when the user has logged in.
+ */
 app.get('/', (req, res, next) => {
     if (req.session.loggedin) {
         console.log("User " + req.session.email + " is logged in!");
@@ -272,6 +302,11 @@ app.get('/', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'HomePage.html')); //HomePage.html
 });
 
+
+/**
+ * create a user in the register page and it will be created 
+ * in the user collection in mongodb.
+ */
 app.post('/register', (req, res, next) => {
     var userBody = req.body;
     console.log(userBody);
@@ -304,6 +339,11 @@ app.post('/register', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Login.html'));
 });
 
+
+/**
+ * get the login page information. This method will check if 
+ * the user is stored in the database or not.
+ */
 app.get('/login', (req, res, next) => {
     if (req.session.loggedin) {
         console.log("Already logged in as " + req.session.email + "!");
@@ -313,6 +353,11 @@ app.get('/login', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Login.html'))
 });
 
+
+/**
+ * This method will create a session with the login 
+ * information if that user exists in the database.
+ */
 app.post('/login', async (req, res, next) => {
     var userBody = req.body;
     const username = userBody.email;
@@ -342,10 +387,19 @@ app.post('/login', async (req, res, next) => {
     }
 });
 
+
+/**
+ * get method for the reset password page.
+ */
 app.get('/reset', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'ResetPassword.html'))
 });
 
+
+/**
+ * post method for resetting the user's password. It will update it on the 
+ * user collection in the database to replace the previous password with this new one.
+ */
 app.post('/reset', function (req, res, next) {
     async.waterfall([
         function (done) {
@@ -402,6 +456,10 @@ app.post('/reset', function (req, res, next) {
     ]);
 });
 
+
+/**
+ * get method for resetting the password.
+ */
 app.get('/reset/:token', function (req, res) {
     User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function (err, user) {
         if (!user) {
@@ -413,6 +471,10 @@ app.get('/reset/:token', function (req, res) {
     });
 });
 
+
+/**
+ * 
+ */
 app.post('/reset/:token', function (req, res) {
     async.waterfall([
         function (done) {
@@ -436,6 +498,11 @@ app.post('/reset/:token', function (req, res) {
     ]);
 });
 
+
+/**
+ * this method will log the user our of the 
+ * website and the session they are in.
+ */
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -446,14 +513,25 @@ app.get('/logout', (req, res) => {
     });
 });
 
+
+/**
+ * get method for orders page.
+ */
 app.get('/orders', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Orders.html'))
 });
 
+
+/**
+ * get method for the register page.
+ */
 app.get('/register', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Signup.html'))
 });
 
+/**
+ * setting the port number that the website will run on. In this case it is 8000.
+ */
 var port = process.env.PORT || 8000;
 console.log("Running on port: " + port);
 app.listen(port);
