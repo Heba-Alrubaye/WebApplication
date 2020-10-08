@@ -21,6 +21,8 @@ var urlencode = bodyParser.urlencoded({ extended: false });
 const username = "admin";
 const password = "BiINPxSnYq4ygeRf";
 
+const debug = true;
+
 const uri = `mongodb+srv://${username}:${password}@cluster0.7fsul.mongodb.net/shop`;
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -216,11 +218,11 @@ app.post('/login', async (req, res, next) => {
     }
 });
 
-app.get('/forgot', (req, res, next) => {
+app.get('/reset', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'ResetPassword.html'))
 });
 
-app.post('/forgot', function (req, res, next) {
+app.post('/reset', function (req, res, next) {
     async.waterfall([
         function (done) {
             crypto.randomBytes(20, function (err, buf) {
@@ -230,14 +232,18 @@ app.post('/forgot', function (req, res, next) {
         },
         function (token, done) {
             User.findOne({ email: req.body.email }, function (err, user) {
-                // if (!user) {
-                //     req.flash('error', 'No account with that email address exists.');
-                //     return res.redirect('/forgot');
-                // }
+                if (!user) {
+                    res.status(404).end('That email address cannot be found.');
+                    if (debug) console.log("Email address does not exist.");
+                    return;
+                }
                 user.resetPasswordToken = token;
                 user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+                if (debug) {
+                    console.log("Token: " + user.resetPasswordToken);
+                    console.log("Expires: " + user.resetPasswordExpires);
+                }
 
-                console.log("saved")
                 user.save(function (err) {
                     done(err, token, user);
                 });
@@ -265,57 +271,45 @@ app.post('/forgot', function (req, res, next) {
                     'http://' + req.headers.host + '/reset/' + token + '\n\n' +
                     'If you did not request this, please ignore this email and your password will remain unchanged.\n' // plain text body
             };
-            smtpTransport.sendMail(mailOptions, function (err) {
-                req.flash('info', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
-                done(err, 'done');
-            });
+            smtpTransport.sendMail(mailOptions);
+            res.status(201).end('An e-mail has been sent to ' + user.email + ' with further instructions.');
+            if (debug) console.log("Password reset email sent to " + user.email);
         }
-    ], function (err) {
-        if (err) return next(err);
-        res.redirect('/forgot');
-    });
+    ]);
 });
 
 app.get('/reset/:token', function (req, res) {
     User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function (err, user) {
-        // if (!user) {
-        //     req.flash('error', 'Password reset token is invalid or has expired.');
-        //     return res.redirect('/reset');
-        // }
-        res.render('game', {token: req.params.token})
-        // res.sendFile(path.join(__dirname, 'views', 'ChangePassword.html'))
+        if (!user) {
+            res.status(404).end('Password reset token is invalid or has expired.');
+            if (debug) console.log("Password reset token was invalid or has expired");
+            return;
+        }
+        res.sendFile(path.join(__dirname, 'views', 'ChangePassword.html'))
     });
 });
 
 app.post('/reset/:token', function (req, res) {
     async.waterfall([
         function (done) {
-            console.log(req.params.token)
-            User.findOne({ resetPasswordToken: req.params.token }, function (err, user) { //  resetPasswordExpires: { $gt: Date.now() }
-                // if (!user) {
-                //   req.flash('error', 'Password reset token is invalid or has expired.');
-                //   return res.redirect('back');
-                // }
-                console.log(user)
-                console.log(req.body.password);
+            User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function (err, user) {
+                if (!user) {
+                  res.status(404).end('Password reset token is invalid or has expired.');
+                  if (debug) console.log("Password reset token was invalid or has expired");
+                  return;
+                }
                 const hash = bcrypt.hashSync(req.body.password, 10);
-                console.log(hash);
+                if (debug) console.log("Hash: " + hash);
+
                 user.hash = hash;
                 user.resetPasswordToken = undefined;
                 user.resetPasswordExpires = undefined;
-
+                
                 user.save();
-
-                // user.save(function (err) {
-                //     req.logIn(user, function (err) {
-                //         done(err, user);
-                //     });
-                // });
+                res.redirect('/login');
             });
         }
-    ], function (err) {
-        res.redirect('/');
-    });
+    ]);
 });
 
 app.get('/logout', (req, res) => {
