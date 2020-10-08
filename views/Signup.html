@@ -44,6 +44,8 @@
     <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required autofocus>
     <label for="inputPassword" class="sr-only">Password</label>
     <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
+    <progress max="5" value="0" id="strength" style="width: 300px;">sdf</progress>
+    <p id="strengthInfo"></p>
     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
     <a class="btn btn-lg btn-secondary btn-block" href="/login">Login</a>
     <div class="checkbox mb-3">
@@ -53,5 +55,30 @@
     </div>
   </form>
 </body>
+
+<script type="text/javascript" src="/assets/js/zxcvbn.js"></script>
+<script type="text/javascript">
+  var password = document.getElementById("inputPassword")
+  password.addEventListener('keyup', function() {
+    checkPassword(password.value)
+    function checkPassword(password) {
+      var strengthBar = document.getElementById("strength")
+      strengthBar.value = zxcvbn(password).score + 1
+      console.log(zxcvbn(password))
+      var strengthInformation = document.getElementById("strengthInfo")
+      if (strengthBar.value === 1) {
+        strengthInformation.innerHTML = "Very Weak";
+      } else if (strengthBar.value === 2) {
+        strengthInformation.innerHTML = "Weak";
+      } else if (strengthBar.value === 3) {
+        strengthInformation.innerHTML = "Fair";
+      } else if (strengthBar.value === 4) {
+        strengthInformation.innerHTML = "Good";
+      } else if (strengthBar.value === 5) {
+        strengthInformation.innerHTML = "Strong";
+      }
+    }
+  })
+</script>
 
 </html>
