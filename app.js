@@ -140,8 +140,9 @@ app.get('/cart', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Cart.html'))
 });
 
-app.get('/edit', (req, res, next) => {
-    res.sendFile(path.join(__dirname, 'views', 'Edit.html'))
+app.get('/edit/:id', (req, res, next) => {
+    let id = req.params.id;
+    res.render("Edit.ejs", {id: id});
 });
 
 app.get('/', (req, res, next) => {
