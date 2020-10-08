@@ -47,6 +47,21 @@ app.get('/add-product', (req, res, next) => {
     // res.sendFile(path.join(__dirname, 'views', '/cart'));
 });
 
+
+
+
+/**
+ * Get method for products.
+ */
+app.get('/home-product', async (req, res, next) => {
+    console.log('get products');
+
+    Product.find({}).then(productBody => {
+
+        console.log(productBody);
+        res.render("HomePage.ejs", {products: productBody});
+    })
+})
 /**
  * Creates the product and adds it to the product collection in mongodb.
  */
@@ -65,6 +80,7 @@ app.post('/add-product', (req, res, next) => {
             console.log(err);
         })
     res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
+    res.sendFile(path.join(__dirname, 'views', 'HomePage.html'));
 
 });
 
@@ -93,7 +109,27 @@ app.delete('/admin-products/:id', (req, res, next) => {
         }
         console.log('Deleted item!');
         req.method = "GET";
-        res.redirect("/admin-products");
+        // res.redirect("/admin-products");
+        res.sendFile(path.join(__dirname, '/admin-products'));
+
+    });
+});
+
+app.delete('/home-prdouct/:id', (req, res, next) => {
+    console.log("delete called");
+    let prod = { _id: req.params.id }
+
+    console.log("Requested deletion of item " + prod._id);
+
+    Product.deleteOne(prod, function (err) {
+        if (err) {
+            console.log(err);
+        }
+        console.log('Deleted item!');
+        req.method = "GET";
+        // res.redirect("/admin-products");
+        res.sendFile(path.join(__dirname, '/home-product'));
+
     });
 });
 
@@ -134,6 +170,11 @@ app.post('/edit/:id', async (req, res, next) => {
 
 app.get('/admin-products', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
+});
+
+app.get('/home-product', (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'views', 'HomePage.html'));
+    // res.sendFile(path.join(__dirname, 'views', '/cart'));
 });
 
 app.get('/cart', (req, res, next) => {
