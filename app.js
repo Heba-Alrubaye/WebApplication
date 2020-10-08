@@ -102,14 +102,21 @@ app.delete('/admin-products/:id', (req, res, next) => {
 /**
  * Update product
  */
-app.put('/edit:id', async (req, res, next) => {
-    let prod = { _id: req.params.id }
+app.post('/edit/:id', async (req, res, next) => {
+    console.log("Called edit PUT");
+    var productBody = req.body;
+    console.log(req.params.id);
+    console.log(productBody);
+    let prod = {
+         name: productBody.name, 
+         price: productBody.price
+    };
 
-    Product.update(prod, function (err) {
+    Product.updateOne({_id: req.params.id}, prod, function (err) {
         if (err) {
             console.log(err);
         }
-        res.send('updated yay!')
+        console.log('Product updated');
     });
     // Products.findOneAndUpdate({
     //     // id = req.body.id,
@@ -121,7 +128,7 @@ app.put('/edit:id', async (req, res, next) => {
     //     res.json(product)
     // });
 
-    res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
+    res.redirect("/admin-products");
 
 });
 
