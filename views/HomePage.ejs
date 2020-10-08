@@ -36,7 +36,7 @@
   <link href="../public/stylesheets/home.css" rel="stylesheet">
 </head>
 
-<script>
+<!-- <script>
   function removeItem(id) {
     console.log("removeItem: " + id);
     var url = "/admin-products/" + id;
@@ -45,36 +45,27 @@
     xrq.open("DELETE", url, true);
     xrq.send();
   }
-</script>
+</script> -->
 
 <body class="text-center">
   <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
     <header class="masthead mb-auto">
       <div class="inner">
-        <h3 class="masthead-brand">Admin Products</h3>
+        <h3 class="masthead-brand">Home Page</h3>
         <nav class="nav nav-masthead justify-content-center">
-          <a class="nav-link " href="/home-product">Home</a>
+          <!-- <a class="nav-link " href="/views/HomePage.html">Home</a> -->
           <a class="nav-link " href="/cart">Cart</a>
           <a class="nav-link" href="/views/Orders.html">Order</a>
           <a class="nav-link" href="/views/AddProduct.html">Add Product</a>
-          <a class="nav-link" href="/admin-products">Admin Product</a>
+          <a class="nav-link" href="/admin-products">Admin Products</a>
+          <a class="nav-link" href="/home-product">Home Page</a>
         </nav>
       </div>
     </header>
 
 
     <main role="main" class="inner cover">
-      <!-- <button action="/admin-products" type="submit">delete Product</button> -->
-      <!-- <br>
-      <br>
-      <form action="/admin-products" method="GET">
-         <label> Name</label> -->
-        <!-- <input type="text" placeholder="name" name="name"><br> -->
-        <!-- <label> Price</label> -->
-        <!-- <input type="text" placeholder="price" name="price"><br> -->
-        <!-- <button  type="submit">get Product</button>
-      </form>    
-      <br> --> 
+
 
       <div>
         <div class="container">
@@ -96,11 +87,11 @@
                       <%= "Price: " + products[i].price %>
                     </p>
                     <div class="d-flex justify-content-between align-items-center">
-                      <div class="btn-group">
-                        <a class="btn btn-sm btn-outline-secondary" type="button" href="/edit/<%= products[i]._id %>" role="button"
+                      <!-- <div class="btn-group">
+                        <a class="btn btn-sm btn-outline-secondary" type="button" href="/views/Edit.html" role="button"
                           class="btn btn-sm btn-outline-secondary">Edit</a>
                           <button id='<%= products[i]._id %>' style="color:red" type="button" onclick='removeItem(id)' class="btn btn-sm btn-outline-secondary">Delete</button>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                 </div>

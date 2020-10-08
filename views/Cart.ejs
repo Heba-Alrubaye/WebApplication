@@ -51,10 +51,11 @@
   <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
     <header class="masthead mb-auto">
       <div class="inner">
-        <h3 class="masthead-brand">Admin Products</h3>
+        <h3 class="masthead-brand">Carts</h3>
         <nav class="nav nav-masthead justify-content-center">
           <a class="nav-link " href="/home-product">Home</a>
           <a class="nav-link " href="/cart">Cart</a>
+          <!-- <a class="nav-link" href="/views/Cart.html">Cart</a> -->
           <a class="nav-link" href="/views/Orders.html">Order</a>
           <a class="nav-link" href="/views/AddProduct.html">Add Product</a>
           <a class="nav-link" href="/admin-products">Admin Product</a>
@@ -97,7 +98,7 @@
                     </p>
                     <div class="d-flex justify-content-between align-items-center">
                       <div class="btn-group">
-                        <a class="btn btn-sm btn-outline-secondary" type="button" href="/edit/<%= products[i]._id %>" role="button"
+                        <a class="btn btn-sm btn-outline-secondary" type="button" href="Edit.html" role="button"
                           class="btn btn-sm btn-outline-secondary">Edit</a>
                           <button id='<%= products[i]._id %>' style="color:red" type="button" onclick='removeItem(id)' class="btn btn-sm btn-outline-secondary">Delete</button>
                       </div>
