@@ -176,7 +176,16 @@ app.get('/admin-products', async (req, res, next) => {
         
         res.render("AdminProducts.ejs", {products: productBody});
     })
-})
+});
+
+
+/**
+ * get the details page for the selected product.
+ */
+app.get('/details/:id', (req, res, next) => {
+    let id = req.params.id;
+    res.render("Details.ejs", {id: id});
+});
 
 
 /**
@@ -263,6 +272,13 @@ app.get('/admin-products', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
 });
 
+/**
+ * Get the details of products page.
+ */
+// app.get('/details', (req, res, next) => {
+//     res.sendFile(path.join(__dirname, 'views', 'Details.html'))
+// });
+
 
 /**
  * get the home page.
@@ -299,7 +315,7 @@ app.get('/', (req, res, next) => {
     } else {
         console.log("User is not logged in!");
     }
-    res.sendFile(path.join(__dirname, 'views', 'Login.html')); //HomePage.html
+    res.sendFile(path.join(__dirname, 'views', 'HomePage.html')); //HomePage.html
 });
 
 

@@ -90,12 +90,15 @@
                     </p>
                     <div class="d-flex justify-content-between align-items-center">
                       <div class="btn-group">
-                        <a type="button" class="btn btn-sm btn-outline-secondary">Details</a>
+                        <!-- <form  action="/details" method="GET">
+                          <a type="submit" class="btn btn-sm btn-outline-secondary" >Details</a>
+
+
+                        </form> -->
+                        <a class="btn btn-sm btn-outline-secondary" type="button" href="/details/<%= products[i]._id %>" role="button"
+                          class="btn btn-sm btn-outline-secondary">Details</a>
+
                         <form action="/add-cart" method="POST" >
-                          <!-- <input type="text" placeholder="name" name="name"><br>
-                           <label> Price</label> -->
-                          <!-- <input type="text" placeholder="price" name="price"><br> --> 
-                          <a type="button" class="btn btn-sm btn-outline-secondary" href="/views/Details.html">Details</a>
                           <button type="submit" class="btn btn-sm btn-outline-secondary">Add To Cart</button> 
                       </form>
 
