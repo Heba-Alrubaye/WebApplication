@@ -15,6 +15,8 @@ const db = require('./mongodb');
 // const Products = require('./product.model');
 const User = db.User;
 const Product = db.Product;
+const Cart = db.Cart;
+
 var urlencode = bodyParser.urlencoded({ extended: false });
 // const productCollection = db.collection('products')
 
@@ -87,17 +89,29 @@ app.post('/add-product', (req, res, next) => {
 });
 
 /**
+ * Creates the product and adds it to the cart collection in mongodb.
+ */
+
+
+/**
  * Get method for products.
  */
 app.get('/cart', async (req, res, next) => {
-    console.log('get products');
+    console.log('get cart products');
 
-    Product.find({}).then(productBody => {
+    Cart.find({}).then(cartProductBody => {
 
         //console.log(productBody);
-        res.render("Cart.ejs", {products: productBody});
+        res.render("Cart.ejs", {carts: cartProductBody});
     })
 });
+
+// Product.one{_id: req.params.id}, prod, function (err) {
+//     if (err) {
+//         console.log(err);
+//     }
+//     console.log('Product updated');
+// });
 
 /**
  * Get method for products.
@@ -148,7 +162,7 @@ app.delete('/admin-products/:id', (req, res, next) => {
 //     });
 // });
 
-app.delete('/home-prdouct/:id', (req, res, next) => {
+app.delete('/home-product/:id', (req, res, next) => {
     console.log("delete called");
     let prod = { _id: req.params.id }
 
@@ -166,40 +180,7 @@ app.delete('/home-prdouct/:id', (req, res, next) => {
     });
 });
 
-/**
- * Update product
- */
-app.delete('/cart/:id', async (req, res, next) => {
-    console.log("Called cart PUT");
-    var productBody = req.body;
-    console.log(req.params.id);
-    console.log(productBody);
-    let prod = {
-         name: productBody.name, 
-         price: productBody.price
-    };
 
-    Product.deleteOne({_id: req.params.id}, prod, function (err) {
-        if (err) {
-            console.log(err);
-        }
-        console.log('Product updated');
-    });
-
-    
-    // Products.findOneAndUpdate({
-    //     // id = req.body.id,
-    //     name = req.body.name,
-    //     price = req.body.prices
-
-    // }).then(product =>{
-    //     console.log("updated!");
-    //     res.json(product)
-    // });
-
-    res.redirect("/admin-products");
-
-});
 
 /**
  * Update product
