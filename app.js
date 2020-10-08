@@ -525,7 +525,7 @@ app.get('/logout', (req, res) => {
             return console.log(err);
         }
         console.log("User logged out!");
-        res.redirect('/');
+        res.redirect('/login');
     });
 });
 
