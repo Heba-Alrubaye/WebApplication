@@ -312,10 +312,13 @@ app.get('/edit/:id', (req, res, next) => {
 app.get('/', (req, res, next) => {
     if (req.session.loggedin) {
         console.log("User " + req.session.email + " is logged in!");
+        res.sendFile(path.join(__dirname, 'views', 'HomePage.html'))
     } else {
         console.log("User is not logged in!");
+        res.sendFile(path.join(__dirname, 'views', 'Login.html'))
+
     }
-    res.sendFile(path.join(__dirname, 'views', 'HomePage.html')); //HomePage.html
+    ; //HomePage.html
 });
 
 
@@ -337,7 +340,7 @@ app.post('/register', (req, res, next) => {
                 console.log("user created");
 
                 console.log(userBody.email);
-                const hash = bcrypt.hashSync(userBody.password, 10);
+                const hash = bcrypt.hashSync(userBody.password, 10); //10 is salt
                 console.log("hashed password");
 
                 user.hash = hash;
