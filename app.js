@@ -51,7 +51,7 @@ app.use(session({
      resave: false,
      saveUninitialized: false,
      store: new MongoStore({mongooseConnection: mongoose.connection}), //for storing the session in the database
-    //  cookie: { maxAge: 180 * 60 * 1000 } //this is for expiry of the session eg 3 hours
+     cookie: { maxAge: 120 * 60 * 1000 } //this is for expiry of the session eg 2 hours if the user has not logged out
     }));
 
 /**
