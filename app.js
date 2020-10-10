@@ -2,14 +2,17 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
 // var cookieParser = require('cookie-parser');
-var session = require('express-session')
-var mongoose = require('mongoose');
+const session = require('express-session')
+const mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 var async = require('async');
 var nodemailer = require('nodemailer');
 var crypto = require('crypto');
+const MongoStore = require('connect-mongo')(session);
+
+// mongoose.connect(connectionOptions);
 
 const db = require('./mongodb');
 const User = db.User;
@@ -43,7 +46,13 @@ app.use(bodyParser.urlencoded({
 }))
 
 //setting the secret for the session.
-app.use(session({ secret: 'OUR SECRET' }));
+app.use(session({
+     secret: 'OUR SECRET',
+     resave: false,
+     saveUninitialized: false,
+     store: new MongoStore({mongooseConnection: mongoose.connection}),
+    //  cookie: { maxAge: 180 * 60 * 1000 }
+    }));
 
 /**
  * get method for the add product page.
