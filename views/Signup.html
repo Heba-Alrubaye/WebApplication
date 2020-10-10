@@ -64,7 +64,6 @@
     function checkPassword(password) {
       var strengthBar = document.getElementById("strength")
       strengthBar.value = zxcvbn(password).score + 1
-      console.log(zxcvbn(password))
       var strengthInformation = document.getElementById("strengthInfo")
       if (strengthBar.value === 1) {
         strengthInformation.innerHTML = "Very Weak";

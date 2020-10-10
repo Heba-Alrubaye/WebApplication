@@ -8,15 +8,12 @@ const uri = `mongodb+srv://${username}:${password}@cluster0.7fsul.mongodb.net/sh
 
 const connectionOptions = { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false };
 mongoose.connect(uri, connectionOptions);
-mongoose.Promise = global.Promise;
 
 module.exports = {
     User: require('./model/user'),
     Product: require('./model/product'),
     Cart: require('./model/cart')
 };
-
-
 
 async function main() {
     /**
@@ -30,31 +27,11 @@ async function main() {
         // Connect to the MongoDB cluster
         await client.connect();
 
-        // Make the appropriate DB calls
-        await listDatabases(client);
-        await fetchShop(client);
-
     } catch (e) {
         console.error(e);
     } finally {
         await client.close();
     }
 }
-
-async function listDatabases(client) {
-    databasesList = await client.db().admin().listDatabases();
-
-    console.log("Databases:");
-    databasesList.databases.forEach(db => console.log(` - ${db.name}`));
-};
-
-async function fetchShop(client) {
-    const shop = await client.db('shop');
-    const carts = shop.collection('carts');
-    const orders = shop.collection('orders');
-    const products = shop.collection('products');
-    const sessions = shop.collection('sessions');
-    const users = shop.collection('users');
-};
 
 main().catch(console.error);

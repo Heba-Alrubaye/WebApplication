@@ -4,7 +4,6 @@ var bodyParser = require('body-parser');
 // var cookieParser = require('cookie-parser');
 const session = require('express-session')
 const mongoose = require('mongoose');
-const { MongoClient } = require('mongodb');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 var async = require('async');
@@ -12,29 +11,13 @@ var nodemailer = require('nodemailer');
 var crypto = require('crypto');
 const MongoStore = require('connect-mongo')(session);
 
-// mongoose.connect(connectionOptions);
-
+var app = express();
 const db = require('./mongodb');
 const User = db.User;
 const Product = db.Product;
 const Cart = db.Cart;
 
-var urlencode = bodyParser.urlencoded({ extended: false });
-
-const username = "admin";
-const password = "BiINPxSnYq4ygeRf";
-
 const debug = true;
-
-const uri = `mongodb+srv://${username}:${password}@cluster0.7fsul.mongodb.net/shop`;
-
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-client.connect();
-
-// mongoose.connect('mongodb+srv://${username}:${password}@cluster0.7fsul.mongodb.net/test')
-// var db = mongoose.connection;
-
-var app = express();
 
 // app.use(express.static(__dirname + '/views'));
 // app.use(express.static(__dirname + '/public'));
@@ -47,12 +30,12 @@ app.use(bodyParser.urlencoded({
 
 //setting the secret for the session.
 app.use(session({
-     secret: 'OUR SECRET',
-     resave: false,
-     saveUninitialized: false,
-     store: new MongoStore({mongooseConnection: mongoose.connection}), //for storing the session in the database
-     cookie: { maxAge: 120 * 60 * 1000 } //this is for expiry of the session eg 2 hours if the user has not logged out
-    }));
+    secret: 'OUR SECRET',
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({ mongooseConnection: mongoose.connection }), // for storing the session in the database
+    cookie: { maxAge: 120 * 60 * 1000 } // this is for expiry of the session eg 2 hours if the user has not logged out
+}));
 
 /**
  * get method for the add product page.
@@ -61,9 +44,6 @@ app.get('/add-product', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
     // res.sendFile(path.join(__dirname, 'views', '/cart'));
 });
-
-
-
 
 /**
  * Get method for products. 
@@ -76,10 +56,9 @@ app.get('/home-product', async (req, res, next) => {
     Product.find({}).then(productBody => {
 
         console.log(productBody);
-        res.render("HomePage.ejs", {products: productBody});
+        res.render("HomePage.ejs", { products: productBody });
     })
 })
-
 
 /**
  * Creates the product and adds it to the product collection in mongodb.
@@ -103,11 +82,10 @@ app.post('/add-product', (req, res, next) => {
 
 });
 
-
 /**
  * Creates the product and adds it to the cart collection in mongodb.
  */
-app.post('/add-cart',  (req, res, next) => {
+app.post('/add-cart', (req, res, next) => {
     console.log('it entered post');
     const { name, price } = req.body;
 
@@ -119,7 +97,7 @@ app.post('/add-cart',  (req, res, next) => {
         .then((cartProductBody) => {
             console.log(cartProductBody);
             console.log("cart product saved");
- 
+
         })
         .catch((err) => {
             console.log(err);
@@ -128,7 +106,6 @@ app.post('/add-cart',  (req, res, next) => {
 
 
 });
-
 
 /**
  * Get method for cart products. 
@@ -141,10 +118,9 @@ app.get('/cart', async (req, res, next) => {
     Cart.find({}).then(cartProductBody => {
 
         //console.log(productBody);
-        res.render("Cart.ejs", {carts: cartProductBody});
+        res.render("Cart.ejs", { carts: cartProductBody });
     })
 });
-
 
 /**
  * delete method for cart products. 
@@ -169,8 +145,6 @@ app.delete('/cart/:id', (req, res, next) => {
     });
 });
 
-
-
 /**
   * Get method for products. 
  * This method gets the products from the products collection, so it can be 
@@ -182,20 +156,18 @@ app.get('/admin-products', async (req, res, next) => {
     Product.find({}).then(productBody => {
 
         //console.log(productBody);
-        
-        res.render("AdminProducts.ejs", {products: productBody});
+
+        res.render("AdminProducts.ejs", { products: productBody });
     })
 });
-
 
 /**
  * get the details page for the selected product.
  */
 app.get('/details/:id', (req, res, next) => {
     let id = req.params.id;
-    res.render("Details.ejs", {id: id});
+    res.render("Details.ejs", { id: id });
 });
-
 
 /**
  * delete method for admin products. 
@@ -243,8 +215,6 @@ app.delete('/home-product/:id', (req, res, next) => {
     });
 });
 
-
-
 /**
  * Update product.
  * This method will update the selected product in a seperate page
@@ -257,11 +227,11 @@ app.post('/edit/:id', async (req, res, next) => {
     console.log(req.params.id);
     console.log(productBody);
     let prod = {
-         name: productBody.name, 
-         price: productBody.price
+        name: productBody.name,
+        price: productBody.price
     };
 
-    Product.updateOne({_id: req.params.id}, prod, function (err) {
+    Product.updateOne({ _id: req.params.id }, prod, function (err) {
         if (err) {
             console.log(err);
         }
@@ -272,7 +242,6 @@ app.post('/edit/:id', async (req, res, next) => {
     res.redirect("/admin-products");
 
 });
-
 
 /**
  * Get the admin products page.
@@ -288,7 +257,6 @@ app.get('/admin-products', (req, res, next) => {
 //     res.sendFile(path.join(__dirname, 'views', 'Details.html'))
 // });
 
-
 /**
  * get the home page.
  */
@@ -297,7 +265,6 @@ app.get('/home-product', (req, res, next) => {
     // res.sendFile(path.join(__dirname, 'views', '/cart'));
 });
 
-
 /**
  * get the cart page.
  */
@@ -305,15 +272,13 @@ app.get('/cart', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Cart.html'))
 });
 
-
 /**
  * get the edit page for the selected product.
  */
 app.get('/edit/:id', (req, res, next) => {
     let id = req.params.id;
-    res.render("Edit.ejs", {id: id});
+    res.render("Edit.ejs", { id: id });
 });
-
 
 /**
  * direct to the home page when the user has logged in.
@@ -329,7 +294,6 @@ app.get('/', (req, res, next) => {
     }
     ; //HomePage.html
 });
-
 
 /**
  * create a user in the register page and it will be created 
@@ -367,7 +331,6 @@ app.post('/register', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Login.html'));
 });
 
-
 /**
  * get the login page information. This method will check if 
  * the user is stored in the database or not.
@@ -380,7 +343,6 @@ app.get('/login', (req, res, next) => {
     }
     res.sendFile(path.join(__dirname, 'views', 'Login.html'))
 });
-
 
 /**
  * This method will create a session with the login 
@@ -415,14 +377,12 @@ app.post('/login', async (req, res, next) => {
     }
 });
 
-
 /**
  * get method for the reset password page.
  */
 app.get('/reset', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'ResetPassword.html'))
 });
-
 
 /**
  * post method for resetting the user's password. It will update it on the 
@@ -484,7 +444,6 @@ app.post('/reset', function (req, res, next) {
     ]);
 });
 
-
 /**
  * get method for resetting the password.
  */
@@ -499,7 +458,6 @@ app.get('/reset/:token', function (req, res) {
     });
 });
 
-
 /**
  * 
  */
@@ -508,9 +466,9 @@ app.post('/reset/:token', function (req, res) {
         function (done) {
             User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function (err, user) {
                 if (!user) {
-                  res.status(404).end('Password reset token is invalid or has expired.');
-                  if (debug) console.log("Password reset token was invalid or has expired");
-                  return;
+                    res.status(404).end('Password reset token is invalid or has expired.');
+                    if (debug) console.log("Password reset token was invalid or has expired");
+                    return;
                 }
                 const hash = bcrypt.hashSync(req.body.password, 10);
                 if (debug) console.log("Hash: " + hash);
@@ -518,14 +476,13 @@ app.post('/reset/:token', function (req, res) {
                 user.hash = hash;
                 user.resetPasswordToken = undefined;
                 user.resetPasswordExpires = undefined;
-                
+
                 user.save();
                 res.redirect('/login');
             });
         }
     ]);
 });
-
 
 /**
  * this method will log the user our of the 
@@ -541,14 +498,12 @@ app.get('/logout', (req, res) => {
     });
 });
 
-
 /**
  * get method for orders page.
  */
 app.get('/orders', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'views', 'Orders.html'))
 });
-
 
 /**
  * get method for the register page.
