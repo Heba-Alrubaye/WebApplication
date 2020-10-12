@@ -42,7 +42,7 @@ app.use('/', require('./routes/users'));
  * get method for the add product page.
  */
 app.get('/add-product', (req, res, next) => {
-    res.render('addproduct');
+    res.render('AddProduct');
 });
 
 /**
@@ -55,7 +55,7 @@ app.get('/home-product', async (req, res, next) => {
 
     Product.find({}).then(productBody => {
         console.log(productBody);
-        res.render("homepage", { products: productBody });
+        res.render("HomePage", { products: productBody });
     })
 })
 
@@ -76,7 +76,7 @@ app.post('/add-product', (req, res, next) => {
         .catch((err) => {
             console.log(err);
         })
-    res.render("homepage");
+    res.render("HomePage");
 });
 
 /**
@@ -99,7 +99,7 @@ app.post('/add-cart', (req, res, next) => {
         .catch((err) => {
             console.log(err);
         })
-    res.render("homepage");
+    res.render("HomePage");
 });
 
 /**
@@ -112,7 +112,7 @@ app.get('/cart', async (req, res, next) => {
 
     Cart.find({}).then(cartProductBody => {
         //console.log(productBody);
-        res.render("cart", { carts: cartProductBody });
+        res.render("Cart", { carts: cartProductBody });
     })
 });
 
@@ -132,7 +132,7 @@ app.delete('/cart/:id', (req, res, next) => {
         }
         console.log('Cart product has been deleted!');
         req.method = "GET";
-        res.render("cart");
+        res.render("Cart");
     });
 });
 
@@ -145,7 +145,7 @@ app.get('/admin-products', async (req, res, next) => {
     console.log('get products');
 
     Product.find({}).then(productBody => {
-        res.render("adminproducts", { products: productBody });
+        res.render("AdminProducts", { products: productBody });
     })
 });
 
@@ -154,7 +154,7 @@ app.get('/admin-products', async (req, res, next) => {
  */
 app.get('/details/:id', (req, res, next) => {
     let id = req.params.id;
-    res.render("details", { id: id });
+    res.render("Details", { id: id });
 });
 
 /**
@@ -175,7 +175,7 @@ app.delete('/admin-products/:id', (req, res, next) => {
         }
         console.log('Deleted item!');
         req.method = "GET";
-        res.render("admin-products");
+        res.render("AdminProducts");
 
     });
 });
@@ -195,7 +195,7 @@ app.delete('/home-product/:id', (req, res, next) => {
         }
         console.log('Deleted item!');
         req.method = "GET";
-        res.render("home-product");
+        res.render("AdminProducts");
 
     });
 });
@@ -223,14 +223,14 @@ app.post('/edit/:id', async (req, res, next) => {
         console.log('Product updated');
     });
 
-    res.render("admin-products");
+    res.render("AdminProducts");
 });
 
 /**
  * Get the admin products page.
  */
 app.get('/admin-products', (req, res, next) => {
-    res.render("admin-products");
+    res.render("AdminProducts");
 });
 
 /**
@@ -244,14 +244,14 @@ app.get('/admin-products', (req, res, next) => {
  * get the home page.
  */
 app.get('/home-product', (req, res, next) => {
-    res.render("homepage");
+    res.render("HomePage");
 });
 
 /**
  * get the cart page.
  */
 app.get('/cart', (req, res, next) => {
-    res.render("cart");
+    res.render("Cart");
 });
 
 /**
@@ -259,7 +259,7 @@ app.get('/cart', (req, res, next) => {
  */
 app.get('/edit/:id', (req, res, next) => {
     let id = req.params.id;
-    res.render("edit", { id: id });
+    res.render("Edit", { id: id });
 });
 
 // /**
@@ -268,10 +268,10 @@ app.get('/edit/:id', (req, res, next) => {
 // app.get('/', (req, res, next) => {
 //     if (req.session.loggedin) {
 //         console.log("User " + req.session.email + " is logged in!");
-//         res.render("homepage");
+//         res.render("HomePage");
 //     } else {
 //         console.log("User is not logged in!");
-//         res.render("login");
+//         res.render("Login");
 //     }
 // });
 
@@ -279,7 +279,7 @@ app.get('/edit/:id', (req, res, next) => {
  * get method for orders page.
  */
 app.get('/orders', (req, res, next) => {
-    res.render("orders");
+    res.render("Orders");
 });
 
 /**
