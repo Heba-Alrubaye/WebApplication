@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 var async = require('async');
 var nodemailer = require('nodemailer');
 var crypto = require('crypto');
+const zxcvbn = require('zxcvbn');
+const passport = require('passport');
 
 const db = require('../mongodb');
 const User = db.User;
@@ -33,29 +35,51 @@ router.get('/register', (req, res, next) => {
 
 /**
  * Create a user and put the user collection in mongodb.
- * @author Heba
+ * @author Heba & Toby
  */
 router.post('/register', (req, res, next) => {
   var userBody = req.body;
+  const email = userBody.email;
+  const password = userBody.password;
+
+  let errors = [];
+
+  if (!email) {
+    errors.push({ msg: 'Please enter an email address.' });
+  } else if (!email.includes('@')) {
+    errors.push({ msg: 'Please enter a valid email address.' });
+  } else if (!password) {
+    errors.push({ msg: 'Please enter a password.' });
+  } else if (zxcvbn(password).score < 1) {
+    errors.push({ msg: 'Password is too weak.' });
+  }
+
+  if (errors.length > 0) {
+    res.render('register', { errors });
+    return;
+  }
 
   User.countDocuments({ email: userBody.email }, async function (err, count) {
     try {
       if (count > 0) {
         if (debug) console.log("That email already exists!")
+        errors.push({ msg: 'An account with that email address already exists.' });
+        res.render('register', { errors });
+        return;
       }
       else {
         const user = new User(userBody);
-        if (debug) console.log("Email: " + userBody.email);
-        const hash = bcrypt.hashSync(userBody.password, 10); // salt
+        if (debug) console.log("Email: " + email);
+        const hash = bcrypt.hashSync(password, 10); // salt
         user.hash = hash;
         if (debug) console.log("Hash: " + user.hash);
         user.save();
+        res.render('login');
       }
     } catch (err) {
       console.error(err);
     }
   })
-  res.render('login');
 });
 
 /**
@@ -72,16 +96,33 @@ router.get('/login', (req, res, next) => {
 
 /**
  * Post login method which will create a session with the login information if that user exists in the database.
- * @author Heba
+ * @author Heba & Toby
  */
 router.post('/login', async (req, res, next) => {
   var userBody = req.body;
-  const username = userBody.email;
+  const email = userBody.email;
   const password = userBody.password;
 
-  const user = await User.findOne({ 'email': { $in: [username] } }); // prevents NOSQL injection
+  let errors = [];
+
+  if (!email) {
+    errors.push({ msg: 'Please enter an email address.' });
+  } else if (!email.includes('@')) {
+    errors.push({ msg: 'Please enter a valid email address.' });
+  } else if (!password) {
+    errors.push({ msg: 'Please enter a password.' });
+  }
+
+  if (errors.length > 0) {
+    res.render('login', { errors });
+    return;
+  }
+
+  const user = await User.findOne({ 'email': { $in: [email] } }); // prevents NOSQL injection
   if (!user) {
     if (debug) console.log('Invalid user!');
+    errors.push({ msg: 'Please enter a valid email address.' });
+    res.render('login', { errors });
     return;
   } else {
     if (debug) console.log(user.email + ' found in mongodb');
@@ -95,7 +136,33 @@ router.post('/login', async (req, res, next) => {
     res.render('homepage');
   } else {
     if (debug) console.log('Invalid password!');
+    errors.push({ msg: 'Invalid password.' });
+    res.render('login', { errors });
+    return;
   }
+});
+
+/**
+ * Google login.
+ * @author Toby
+ */
+router.get('/google', passport.authenticate('google', {
+  scope: ['profile', 'email']
+}));
+
+/**
+ * Google callback route.
+ * @author Toby
+ */
+router.get('/google/redirect', (req, res, next) => {
+  if (req.user) {
+    req.session.loggedin = true;
+    req.session.email = req.user.email;
+  }
+  passport.authenticate('google', {
+    successReturnToOrRedirect: '/',
+    failureRedirect: '/login'
+  })(req, res, next);
 });
 
 /**

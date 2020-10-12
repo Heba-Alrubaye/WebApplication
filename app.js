@@ -5,24 +5,28 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
 
+require('./config/passport')(passport);
+
 var app = express();
 const db = require('./mongodb');
 const Product = db.Product;
 const Cart = db.Cart;
 
+// ejs
 app.set('view engine', 'ejs');
 
 // app.set('views', __dirname + "/views");
 // app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/')); // TODO: could be a security issue
 
+// body parser
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use(session({
     secret: 'OUR SECRET',
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     store: new MongoStore({ mongooseConnection: mongoose.connection }), // for storing the session in the database
     cookie: { maxAge: 120 * 60 * 1000 } // this is for expiry of the session eg 2 hours if the user has not logged out
 }));
@@ -30,6 +34,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// routes
 app.use('/', require('./routes/index'));
 app.use('/', require('./routes/users'));
 
