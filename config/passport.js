@@ -1,17 +1,17 @@
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
+const config = require('../config/config');
 const db = require('../mongodb');
 const User = db.User;
 
 module.exports = function (passport) {
     passport.use(
         new GoogleStrategy({
-            clientID: '919990039039-ui1t64c6gs8bqu3ef232ke9tk5oujg5b.apps.googleusercontent.com',
-            clientSecret: '8RS6ehnhuS6aB-ZIEDUq8hOX',
+            clientID: config.google.clientID,
+            clientSecret: config.google.clientSecret,
             callbackURL: '/google/redirect'
         }, (accessToken, refreshToken, profile, done) => {
             let email = profile.emails[0].value;
-            // let password = null;
-            // Check if user exists, if not, then create a user
+            // check if the user exists otherwise create a user
             User.findOne({
                 email: email
             }, function (err, user) {

@@ -9,6 +9,7 @@ var crypto = require('crypto');
 const zxcvbn = require('zxcvbn');
 const passport = require('passport');
 
+const config = require('../config/config');
 const db = require('../mongodb');
 const User = db.User;
 
@@ -19,7 +20,7 @@ const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
 
 router.use(session({
-  secret: 'OUR SECRET',
+  secret: config.router.secret,
   resave: false,
   saveUninitialized: false,
   store: new MongoStore({ mongooseConnection: mongoose.connection }), // for storing the session in the database
@@ -132,6 +133,7 @@ router.post('/login', async (req, res, next) => {
     if (debug) console.log("Token: " + token);
     req.session.loggedin = true;
     req.session.email = user.email;
+    req.session.admin = user.admin;
     if (debug) console.log("User logged in: " + req.session.loggedin);
     res.render('homepage');
   } else {
@@ -158,6 +160,7 @@ router.get('/google/redirect', (req, res, next) => {
   if (req.user) {
     req.session.loggedin = true;
     req.session.email = req.user.email;
+    req.session.admin = user.admin;
   }
   passport.authenticate('google', {
     successReturnToOrRedirect: '/',
@@ -205,19 +208,19 @@ router.post('/reset', function (req, res, next) {
     },
     function (token, user, done) {
       var smtpTransport = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true, // true for 465, false for other ports
+        host: config.nodemailer.host,
+        port: config.nodemailer.port,
+        secure: config.nodemailer.port === 465, // true for 465, false for other ports
         auth: {
-          user: 'nwen304groupproject@gmail.com',
-          pass: "qGDq6njmdUxWS72H"
+          user: config.nodemailer.username,
+          pass: config.nodemailer.password
         },
         tls: {
           rejectUnauthorized: false
         }
       });
       var mailOptions = {
-        from: '"NWEN304 Group Project" <nwen304groupproject@gmail.com>', // sender address
+        from: `"NWEN304 Group Project" <${config.nodemailer.username}>`, // sender address
         to: user.email, // list of receivers
         subject: 'Password Reset', // subject line
         text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +

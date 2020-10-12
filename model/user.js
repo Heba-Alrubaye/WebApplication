@@ -11,7 +11,8 @@ const userSchema = new Schema({
     hash: { type: String, required: true },
     google: Boolean,
     resetPasswordToken: String,
-    resetPasswordExpires: Date
+    resetPasswordExpires: Date,
+    admin: Boolean
 });
 
 module.exports = mongoose.model('User', userSchema);

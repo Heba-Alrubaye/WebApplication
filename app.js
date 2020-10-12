@@ -5,6 +5,8 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
 
+const isAuth = require('./middleware/is-auth');
+
 require('./config/passport')(passport);
 
 var app = express();
@@ -41,7 +43,7 @@ app.use('/', require('./routes/users'));
 /**
  * get method for the add product page.
  */
-app.get('/add-product', (req, res, next) => {
+app.get('/add-product', isAuth.admin, (req, res, next) => {
     res.render('addproduct');
 });
 
@@ -50,7 +52,7 @@ app.get('/add-product', (req, res, next) => {
  * This method gets the products from the products collection, so it can be 
  * displayed on the home page.
  */
-app.get('/home-product', async (req, res, next) => {
+app.get('/home-product', isAuth.user, async (req, res, next) => {
     console.log('get products');
 
     Product.find({}).then(productBody => {
@@ -62,7 +64,7 @@ app.get('/home-product', async (req, res, next) => {
 /**
  * Creates the product and adds it to the product collection in mongodb.
  */
-app.post('/add-product', (req, res, next) => {
+app.post('/add-product', isAuth.admin, (req, res, next) => {
     console.log('it entered post');
     var productBody = req.body;
     const product = new Product(productBody); // this is modal object.
@@ -82,7 +84,7 @@ app.post('/add-product', (req, res, next) => {
 /**
  * Creates the product and adds it to the cart collection in mongodb.
  */
-app.post('/add-cart', (req, res, next) => {
+app.post('/add-cart', isAuth.user, (req, res, next) => {
     console.log('it entered post');
     const { name, price } = req.body;
 
@@ -107,7 +109,7 @@ app.post('/add-cart', (req, res, next) => {
  * This method gets the products from the cart collection, so it can be 
  * displayed on the cart page.
  */
-app.get('/cart', async (req, res, next) => {
+app.get('/cart', isAuth.user, async (req, res, next) => {
     console.log('get cart products');
 
     Cart.find({}).then(cartProductBody => {
@@ -121,7 +123,7 @@ app.get('/cart', async (req, res, next) => {
  * This method deletes the product off the cart page as well as the 
  * cart collection in mongodb.
  */
-app.delete('/cart/:id', (req, res, next) => {
+app.delete('/cart/:id', isAuth.user, (req, res, next) => {
     console.log("delete called");
     let prod = { _id: req.params.id }
 
@@ -141,7 +143,7 @@ app.delete('/cart/:id', (req, res, next) => {
  * This method gets the products from the products collection, so it can be 
  * displayed on the admin page.
  */
-app.get('/admin-products', async (req, res, next) => {
+app.get('/admin-products', isAuth.admin, async (req, res, next) => {
     console.log('get products');
 
     Product.find({}).then(productBody => {
@@ -152,7 +154,7 @@ app.get('/admin-products', async (req, res, next) => {
 /**
  * get the details page for the selected product.
  */
-app.get('/details/:id', (req, res, next) => {
+app.get('/details/:id', isAuth.user, (req, res, next) => {
     let id = req.params.id;
     res.render("details", { id: id });
 });
@@ -162,7 +164,7 @@ app.get('/details/:id', (req, res, next) => {
  * This method deletes the product off the admin page as well as the 
  * products collection in mongodb.
  */
-app.delete('/admin-products/:id', (req, res, next) => {
+app.delete('/admin-products/:id', isAuth.admin, (req, res, next) => {
     console.log("delete called");
     let prod = { _id: req.params.id }
 
@@ -183,7 +185,7 @@ app.delete('/admin-products/:id', (req, res, next) => {
 /**
  * 
  */
-app.delete('/home-product/:id', (req, res, next) => {
+app.delete('/home-product/:id', isAuth.admin, (req, res, next) => {
     console.log("delete called");
     let prod = { _id: req.params.id }
 
@@ -206,7 +208,7 @@ app.delete('/home-product/:id', (req, res, next) => {
  * and it will then update it in the products collection in mongodb.
  * The update will be shown on the page.
  */
-app.post('/edit/:id', async (req, res, next) => {
+app.post('/edit/:id', isAuth.admin, async (req, res, next) => {
     console.log("Called edit PUT");
     var productBody = req.body;
     console.log(req.params.id);
@@ -229,7 +231,7 @@ app.post('/edit/:id', async (req, res, next) => {
 /**
  * Get the admin products page.
  */
-app.get('/admin-products', (req, res, next) => {
+app.get('/admin-products', isAuth.admin, (req, res, next) => {
     res.render("admin-products");
 });
 
@@ -243,21 +245,21 @@ app.get('/admin-products', (req, res, next) => {
 /**
  * get the home page.
  */
-app.get('/home-product', (req, res, next) => {
+app.get('/home-product', isAuth.user, (req, res, next) => {
     res.render("homepage");
 });
 
 /**
  * get the cart page.
  */
-app.get('/cart', (req, res, next) => {
+app.get('/cart', isAuth.user, (req, res, next) => {
     res.render("cart");
 });
 
 /**
  * get the edit page for the selected product.
  */
-app.get('/edit/:id', (req, res, next) => {
+app.get('/edit/:id', isAuth.admin, (req, res, next) => {
     let id = req.params.id;
     res.render("edit", { id: id });
 });
@@ -278,7 +280,7 @@ app.get('/edit/:id', (req, res, next) => {
 /**
  * get method for orders page.
  */
-app.get('/orders', (req, res, next) => {
+app.get('/orders', isAuth.user, (req, res, next) => {
     res.render("orders");
 });
 
