@@ -57,7 +57,7 @@ app.get('/home-product', isAuth.user, async (req, res, next) => {
 
     Product.find({}).then(productBody => {
         console.log(productBody);
-        res.render("homepage", { products: productBody });
+        res.render("HomePage", { products: productBody });
     })
 })
 
@@ -78,7 +78,7 @@ app.post('/add-product', isAuth.admin, (req, res, next) => {
         .catch((err) => {
             console.log(err);
         })
-    res.render("homepage");
+    res.render("HomePage");
 });
 
 /**
@@ -101,7 +101,7 @@ app.post('/add-cart', isAuth.user, (req, res, next) => {
         .catch((err) => {
             console.log(err);
         })
-    res.render("homepage");
+    res.render("HomePage");
 });
 
 /**
@@ -114,7 +114,7 @@ app.get('/cart', isAuth.user, async (req, res, next) => {
 
     Cart.find({}).then(cartProductBody => {
         //console.log(productBody);
-        res.render("cart", { carts: cartProductBody });
+        res.render("Cart", { carts: cartProductBody });
     })
 });
 
@@ -134,7 +134,7 @@ app.delete('/cart/:id', isAuth.user, (req, res, next) => {
         }
         console.log('Cart product has been deleted!');
         req.method = "GET";
-        res.render("cart");
+        res.render("Cart");
     });
 });
 
@@ -147,7 +147,7 @@ app.get('/admin-products', isAuth.admin, async (req, res, next) => {
     console.log('get products');
 
     Product.find({}).then(productBody => {
-        res.render("adminproducts", { products: productBody });
+        res.render("AdminProducts", { products: productBody });
     })
 });
 
@@ -156,7 +156,7 @@ app.get('/admin-products', isAuth.admin, async (req, res, next) => {
  */
 app.get('/details/:id', isAuth.user, (req, res, next) => {
     let id = req.params.id;
-    res.render("details", { id: id });
+    res.render("Details", { id: id });
 });
 
 /**
@@ -177,7 +177,7 @@ app.delete('/admin-products/:id', isAuth.admin, (req, res, next) => {
         }
         console.log('Deleted item!');
         req.method = "GET";
-        res.render("admin-products");
+        res.render("AdminProducts");
 
     });
 });
@@ -197,7 +197,7 @@ app.delete('/home-product/:id', isAuth.admin, (req, res, next) => {
         }
         console.log('Deleted item!');
         req.method = "GET";
-        res.render("home-product");
+        res.render("AdminProducts");
 
     });
 });
@@ -225,7 +225,7 @@ app.post('/edit/:id', isAuth.admin, async (req, res, next) => {
         console.log('Product updated');
     });
 
-    res.render("admin-products");
+    res.render("AdminProducts");
 });
 
 /**
@@ -261,7 +261,7 @@ app.get('/cart', isAuth.user, (req, res, next) => {
  */
 app.get('/edit/:id', isAuth.admin, (req, res, next) => {
     let id = req.params.id;
-    res.render("edit", { id: id });
+    res.render("Edit", { id: id });
 });
 
 // /**
@@ -270,10 +270,10 @@ app.get('/edit/:id', isAuth.admin, (req, res, next) => {
 // app.get('/', (req, res, next) => {
 //     if (req.session.loggedin) {
 //         console.log("User " + req.session.email + " is logged in!");
-//         res.render("homepage");
+//         res.render("HomePage");
 //     } else {
 //         console.log("User is not logged in!");
-//         res.render("login");
+//         res.render("Login");
 //     }
 // });
 

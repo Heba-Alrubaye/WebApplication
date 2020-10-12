@@ -31,7 +31,7 @@ router.use(session({
  * Get method for the register page.
  */
 router.get('/register', (req, res, next) => {
-  res.render('register');
+  res.render('Register');
 });
 
 /**
@@ -56,7 +56,7 @@ router.post('/register', (req, res, next) => {
   }
 
   if (errors.length > 0) {
-    res.render('register', { errors });
+    res.render('Register', { errors });
     return;
   }
 
@@ -65,7 +65,7 @@ router.post('/register', (req, res, next) => {
       if (count > 0) {
         if (debug) console.log("That email already exists!")
         errors.push({ msg: 'An account with that email address already exists.' });
-        res.render('register', { errors });
+        res.render('Register', { errors });
         return;
       }
       else {
@@ -75,7 +75,7 @@ router.post('/register', (req, res, next) => {
         user.hash = hash;
         if (debug) console.log("Hash: " + user.hash);
         user.save();
-        res.render('login');
+        res.render('Login');
       }
     } catch (err) {
       console.error(err);
@@ -92,7 +92,7 @@ router.get('/login', (req, res, next) => {
     if (debug) console.log("Already logged in as " + req.session.email + "!");
     return res.status(400).json({ message: "Already logged in as " + req.session.email + "!" });
   }
-  res.render('login');
+  res.render('Login');
 });
 
 /**
@@ -115,7 +115,7 @@ router.post('/login', async (req, res, next) => {
   }
 
   if (errors.length > 0) {
-    res.render('login', { errors });
+    res.render('Login', { errors });
     return;
   }
 
@@ -123,7 +123,7 @@ router.post('/login', async (req, res, next) => {
   if (!user) {
     if (debug) console.log('Invalid user!');
     errors.push({ msg: 'Please enter a valid email address.' });
-    res.render('login', { errors });
+    res.render('Login', { errors });
     return;
   } else {
     if (debug) console.log(user.email + ' found in mongodb');
@@ -135,11 +135,11 @@ router.post('/login', async (req, res, next) => {
     req.session.email = user.email;
     req.session.admin = user.admin;
     if (debug) console.log("User logged in: " + req.session.loggedin);
-    res.render('homepage');
+    res.render('HomePage');
   } else {
     if (debug) console.log('Invalid password!');
     errors.push({ msg: 'Invalid password.' });
-    res.render('login', { errors });
+    res.render('Login', { errors });
     return;
   }
 });
@@ -172,7 +172,7 @@ router.get('/google/redirect', (req, res, next) => {
  * Get method for the reset password page.
  */
 router.get('/reset', (req, res, next) => {
-  res.render('reset');
+  res.render('Reset');
 });
 
 /**
@@ -246,7 +246,7 @@ router.get('/reset/:token', function (req, res) {
       if (debug) console.log("Password reset token was invalid or has expired");
       return;
     }
-    res.render('changepassword');
+    res.render('ChangePassword');
   });
 });
 
@@ -271,7 +271,7 @@ router.post('/reset/:token', function (req, res) {
         user.resetPasswordExpires = undefined;
 
         user.save();
-        res.render('login');
+        res.render('Login');
       });
     }
   ]);
@@ -287,7 +287,7 @@ router.get('/logout', (req, res) => {
       return console.log(err);
     }
     if (debug) console.log("User logged out!");
-    res.render('login');
+    res.render('Login');
   });
 });
 
