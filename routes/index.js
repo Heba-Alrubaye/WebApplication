@@ -1,9 +1,15 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'NWEN304' });
+router.get('/', (req, res, next) => {
+    if (req.session.loggedin) {
+        console.log("User " + req.session.email + " is logged in!");
+        res.render("homepage");
+    } else {
+        console.log("User is not logged in!");
+        res.render("login");
+    }
 });
 
 module.exports = router;
+

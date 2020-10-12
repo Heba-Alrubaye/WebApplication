@@ -1,34 +1,24 @@
 var express = require('express');
 var path = require('path');
-var bodyParser = require('body-parser');
-// var cookieParser = require('cookie-parser');
-const session = require('express-session')
+const session = require('express-session');
+const passport = require('passport');
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-var async = require('async');
-var nodemailer = require('nodemailer');
-var crypto = require('crypto');
 const MongoStore = require('connect-mongo')(session);
 
 var app = express();
 const db = require('./mongodb');
-const User = db.User;
 const Product = db.Product;
 const Cart = db.Cart;
 
-const debug = true;
+app.set('view engine', 'ejs');
 
-// app.use(express.static(__dirname + '/views'));
+// app.set('views', __dirname + "/views");
 // app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/')); // TODO: could be a security issue
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    extended: true
-}))
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
-//setting the secret for the session.
 app.use(session({
     secret: 'OUR SECRET',
     resave: false,
@@ -37,12 +27,17 @@ app.use(session({
     cookie: { maxAge: 120 * 60 * 1000 } // this is for expiry of the session eg 2 hours if the user has not logged out
 }));
 
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/', require('./routes/index'));
+app.use('/', require('./routes/users'));
+
 /**
  * get method for the add product page.
  */
 app.get('/add-product', (req, res, next) => {
-    res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
-    // res.sendFile(path.join(__dirname, 'views', '/cart'));
+    res.render('addproduct');
 });
 
 /**
@@ -54,9 +49,8 @@ app.get('/home-product', async (req, res, next) => {
     console.log('get products');
 
     Product.find({}).then(productBody => {
-
         console.log(productBody);
-        res.render("HomePage.ejs", { products: productBody });
+        res.render("homepage", { products: productBody });
     })
 })
 
@@ -77,9 +71,7 @@ app.post('/add-product', (req, res, next) => {
         .catch((err) => {
             console.log(err);
         })
-    res.sendFile(path.join(__dirname, 'views', 'AddProduct.html'));
-    res.sendFile(path.join(__dirname, 'views', 'HomePage.html'));
-
+    res.render("homepage");
 });
 
 /**
@@ -102,9 +94,7 @@ app.post('/add-cart', (req, res, next) => {
         .catch((err) => {
             console.log(err);
         })
-    res.sendFile(path.join(__dirname, 'views', 'HomePage.html'));
-
-
+    res.render("homepage");
 });
 
 /**
@@ -116,9 +106,8 @@ app.get('/cart', async (req, res, next) => {
     console.log('get cart products');
 
     Cart.find({}).then(cartProductBody => {
-
         //console.log(productBody);
-        res.render("Cart.ejs", { carts: cartProductBody });
+        res.render("cart", { carts: cartProductBody });
     })
 });
 
@@ -138,10 +127,7 @@ app.delete('/cart/:id', (req, res, next) => {
         }
         console.log('Cart product has been deleted!');
         req.method = "GET";
-        // res.sendFile(path.join(__dirname, '/cart'));
-        res.sendFile(path.join(__dirname, 'views', 'Cart.html'));
-
-
+        res.render("cart");
     });
 });
 
@@ -154,10 +140,7 @@ app.get('/admin-products', async (req, res, next) => {
     console.log('get products');
 
     Product.find({}).then(productBody => {
-
-        //console.log(productBody);
-
-        res.render("AdminProducts.ejs", { products: productBody });
+        res.render("adminproducts", { products: productBody });
     })
 });
 
@@ -166,7 +149,7 @@ app.get('/admin-products', async (req, res, next) => {
  */
 app.get('/details/:id', (req, res, next) => {
     let id = req.params.id;
-    res.render("Details.ejs", { id: id });
+    res.render("details", { id: id });
 });
 
 /**
@@ -187,9 +170,7 @@ app.delete('/admin-products/:id', (req, res, next) => {
         }
         console.log('Deleted item!');
         req.method = "GET";
-        // res.redirect("/admin-products");
-        // req.session.cartProduct = cart.cartProduct;  
-        res.sendFile(path.join(__dirname, '/admin-products'));
+        res.render("admin-products");
 
     });
 });
@@ -209,8 +190,7 @@ app.delete('/home-product/:id', (req, res, next) => {
         }
         console.log('Deleted item!');
         req.method = "GET";
-        // res.redirect("/admin-products");
-        res.sendFile(path.join(__dirname, '/home-product'));
+        res.render("home-product");
 
     });
 });
@@ -238,16 +218,14 @@ app.post('/edit/:id', async (req, res, next) => {
         console.log('Product updated');
     });
 
-
-    res.redirect("/admin-products");
-
+    res.render("admin-products");
 });
 
 /**
  * Get the admin products page.
  */
 app.get('/admin-products', (req, res, next) => {
-    res.sendFile(path.join(__dirname, 'views', 'AdminProducts.html'))
+    res.render("admin-products");
 });
 
 /**
@@ -261,15 +239,14 @@ app.get('/admin-products', (req, res, next) => {
  * get the home page.
  */
 app.get('/home-product', (req, res, next) => {
-    res.sendFile(path.join(__dirname, 'views', 'HomePage.html'));
-    // res.sendFile(path.join(__dirname, 'views', '/cart'));
+    res.render("homepage");
 });
 
 /**
  * get the cart page.
  */
 app.get('/cart', (req, res, next) => {
-    res.sendFile(path.join(__dirname, 'views', 'Cart.html'))
+    res.render("cart");
 });
 
 /**
@@ -277,239 +254,27 @@ app.get('/cart', (req, res, next) => {
  */
 app.get('/edit/:id', (req, res, next) => {
     let id = req.params.id;
-    res.render("Edit.ejs", { id: id });
+    res.render("edit", { id: id });
 });
 
-/**
- * direct to the home page when the user has logged in.
- */
-app.get('/', (req, res, next) => {
-    if (req.session.loggedin) {
-        console.log("User " + req.session.email + " is logged in!");
-        res.sendFile(path.join(__dirname, 'views', 'HomePage.html'))
-    } else {
-        console.log("User is not logged in!");
-        res.sendFile(path.join(__dirname, 'views', 'Login.html'))
-
-    }
-    ; //HomePage.html
-});
-
-/**
- * create a user in the register page and it will be created 
- * in the user collection in mongodb.
- */
-app.post('/register', (req, res, next) => {
-    var userBody = req.body;
-    console.log(userBody);
-
-    User.countDocuments({ email: userBody.email }, async function (err, count) {
-        try {
-            if (count > 0) console.log("user already exist!")
-            else {
-                console.log("creating user");
-
-                const user = new User(userBody);
-                console.log("user created");
-
-                console.log(userBody.email);
-                const hash = bcrypt.hashSync(userBody.password, 10); //10 is salt
-                console.log("hashed password");
-
-                user.hash = hash;
-                console.log("added has to user");
-
-                user.save();
-                console.log("user saved");
-            }
-        } catch (err) {
-            console.error(err);
-        }
-
-    })
-
-    res.sendFile(path.join(__dirname, 'views', 'Login.html'));
-});
-
-/**
- * get the login page information. This method will check if 
- * the user is stored in the database or not.
- */
-app.get('/login', (req, res, next) => {
-    if (req.session.loggedin) {
-        console.log("Already logged in as " + req.session.email + "!");
-        return res.status(400).json({ message: "Already logged in as " + req.session.email + "!" });
-
-    }
-    res.sendFile(path.join(__dirname, 'views', 'Login.html'))
-});
-
-/**
- * This method will create a session with the login 
- * information if that user exists in the database.
- */
-app.post('/login', async (req, res, next) => {
-    var userBody = req.body;
-    const username = userBody.email;
-    const password = userBody.password;
-
-    console.log('email: ' + username + ' password: ' + password);
-
-    const user = await User.findOne({ 'email': { $in: [username] } }); // prevents NOSQL injection
-    if (!user) {
-        console.log('user doesn\'t exist!');
-        return;
-    } else {
-        console.log('user name: ' + user.email + 'found in DB');
-    }
-    console.log('checking password');
-    if (bcrypt.compareSync(password, user.hash)) {
-        console.log('password matches');
-        const token = jwt.sign({ sub: user.id }, "placeholder secret", { expiresIn: '7d' });
-        console.log(token);
-        req.session.loggedin = true;
-        req.session.email = user.email;
-        console.log("User logged in: " + req.session.loggedin);
-        res.redirect("/");
-        // addProd;
-    } else {
-        console.log('password doesn\'t match');
-    }
-});
-
-/**
- * get method for the reset password page.
- */
-app.get('/reset', (req, res, next) => {
-    res.sendFile(path.join(__dirname, 'views', 'ResetPassword.html'))
-});
-
-/**
- * post method for resetting the user's password. It will update it on the 
- * user collection in the database to replace the previous password with this new one.
- */
-app.post('/reset', function (req, res, next) {
-    async.waterfall([
-        function (done) {
-            crypto.randomBytes(20, function (err, buf) {
-                var token = buf.toString('hex');
-                done(err, token);
-            });
-        },
-        function (token, done) {
-            User.findOne({ email: req.body.email }, function (err, user) {
-                if (!user) {
-                    res.status(404).end('That email address cannot be found.');
-                    if (debug) console.log("Email address does not exist.");
-                    return;
-                }
-                user.resetPasswordToken = token;
-                user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-                if (debug) {
-                    console.log("Token: " + user.resetPasswordToken);
-                    console.log("Expires: " + user.resetPasswordExpires);
-                }
-
-                user.save(function (err) {
-                    done(err, token, user);
-                });
-            });
-        },
-        function (token, user, done) {
-            var smtpTransport = nodemailer.createTransport({
-                host: 'smtp.gmail.com',
-                port: 465,
-                secure: true, // true for 465, false for other ports
-                auth: {
-                    user: 'nwen304groupproject@gmail.com',
-                    pass: "qGDq6njmdUxWS72H"
-                },
-                tls: {
-                    rejectUnauthorized: false
-                }
-            });
-            var mailOptions = {
-                from: '"NWEN304 Group Project" <nwen304groupproject@gmail.com>', // sender address
-                to: user.email, // list of receivers
-                subject: 'Password Reset', // subject line
-                text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-                    'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-                    'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-                    'If you did not request this, please ignore this email and your password will remain unchanged.\n' // plain text body
-            };
-            smtpTransport.sendMail(mailOptions);
-            res.status(201).end('An e-mail has been sent to ' + user.email + ' with further instructions.');
-            if (debug) console.log("Password reset email sent to " + user.email);
-        }
-    ]);
-});
-
-/**
- * get method for resetting the password.
- */
-app.get('/reset/:token', function (req, res) {
-    User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function (err, user) {
-        if (!user) {
-            res.status(404).end('Password reset token is invalid or has expired.');
-            if (debug) console.log("Password reset token was invalid or has expired");
-            return;
-        }
-        res.sendFile(path.join(__dirname, 'views', 'ChangePassword.html'))
-    });
-});
-
-/**
- * 
- */
-app.post('/reset/:token', function (req, res) {
-    async.waterfall([
-        function (done) {
-            User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, function (err, user) {
-                if (!user) {
-                    res.status(404).end('Password reset token is invalid or has expired.');
-                    if (debug) console.log("Password reset token was invalid or has expired");
-                    return;
-                }
-                const hash = bcrypt.hashSync(req.body.password, 10);
-                if (debug) console.log("Hash: " + hash);
-
-                user.hash = hash;
-                user.resetPasswordToken = undefined;
-                user.resetPasswordExpires = undefined;
-
-                user.save();
-                res.redirect('/login');
-            });
-        }
-    ]);
-});
-
-/**
- * this method will log the user our of the 
- * website and the session they are in.
- */
-app.get('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            return console.log(err);
-        }
-        console.log("User logged out!");
-        res.redirect('/login');
-    });
-});
+// /**
+//  * direct to the home page when the user has logged in.
+//  */
+// app.get('/', (req, res, next) => {
+//     if (req.session.loggedin) {
+//         console.log("User " + req.session.email + " is logged in!");
+//         res.render("homepage");
+//     } else {
+//         console.log("User is not logged in!");
+//         res.render("login");
+//     }
+// });
 
 /**
  * get method for orders page.
  */
 app.get('/orders', (req, res, next) => {
-    res.sendFile(path.join(__dirname, 'views', 'Orders.html'))
-});
-
-/**
- * get method for the register page.
- */
-app.get('/register', (req, res, next) => {
-    res.sendFile(path.join(__dirname, 'views', 'Signup.html'))
+    res.render("orders");
 });
 
 /**
