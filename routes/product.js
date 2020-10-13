@@ -115,7 +115,7 @@ router.get('/cart', isAuth.user, async (req, res, next) => {
 
     Cart.find({}).then(cartProductBody => {
         //console.log(productBody);
-        res.render("Cart", { carts: cartProductBody, admin: req.session.admin });
+        res.render("Cart", { carts: cartProductBody, user: req.session.user });
     })
 });
 
@@ -240,25 +240,38 @@ router.post('/edit/:id', isAuth.admin, async (req, res, next) => {
 });
 
 
-router.post('/details/:id', isAuth.admin, async (req, res, next) => {
-    console.log("inside put details");
-    var productBody = req.body;
-    console.log(req.params.id);
-    console.log(productBody);
-    let prod = {
-        name: productBody.name,
-        price: productBody.price,
-        description: productBody.description
-    };
+// router.get('/details/:id', isAuth.admin,(req, res, next) => {
+//     console.log("inside put details");
+// //const product = await 
+//     Product.findOne({ _id: req.params.id }).then(product=>{
+//         // if (err) {
+//         //     console.log(err);
+//         // }
+//         console.log('Product found');
+//         res.render("Details", {prodcut: product, user: req.session.user});
+//     });
+//     // res.render(product);
 
-    Product.findOne({ _id: req.params.id }, prod, function (err) {
+    
+// });
+
+router.get('/details/:id', isAuth.admin,(req, res, next) => {
+    console.log("inside put details");
+//const product = await 
+    Product.findOne({ _id: req.params.id }, function(err, obj){
         if (err) {
             console.log(err);
-        }
-        console.log('Product found');
-    });
+        }else{
+            console.log('Product found');
+            console.log(obj);
 
-    res.render("Details");
+
+        }
+        // res.render("Details", {prodcut: product, user: req.session.user});
+    });
+    // res.render(product);
+
+    
 });
 
 /**
@@ -271,13 +284,13 @@ router.get('/admin-products', isAuth.admin, (req, res, next) => {
 /**
  * Get the details of products .
  */
-router.get('/details/:id',isAuth.user, (req, res, next) => {
-    console.log("in details!!");
-    let id = req.params.id;
-    res.render("Details", { id: id });
+// router.get('/details/:id',isAuth.user, (req, res, next) => {
+//     console.log("in details!!");
+//     let id = req.params.id;
+//     res.render("Details", { id: id });
 
-    //  res.sendFile(path.join(__dirname, 'views', 'Details.ejs'))
- });
+//     //  res.sendFile(path.join(__dirname, 'views', 'Details.ejs'))
+//  });
 
 /**
  * get the cart page.
