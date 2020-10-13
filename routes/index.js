@@ -2,7 +2,7 @@ var express = require('express');
 const isAuth = require('../middleware/is-auth');
 var router = express.Router();
 
-router.get('/', isAuth.user, (req, res, next) => {
+router.get('/', (req, res, next) => {
     console.log("User " + req.session.email + " is logged in!");
     res.redirect("/home-product");
 });
