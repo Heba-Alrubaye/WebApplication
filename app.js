@@ -243,13 +243,6 @@ app.get('/admin-products', isAuth.admin, (req, res, next) => {
 // });
 
 /**
- * get the home page.
- */
-app.get('/home-product', isAuth.user, (req, res, next) => {
-    res.render("homepage");
-});
-
-/**
  * get the cart page.
  */
 app.get('/cart', isAuth.user, (req, res, next) => {
