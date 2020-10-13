@@ -264,12 +264,18 @@ router.get('/details/:id', isAuth.admin,(req, res, next) => {
         }else{
             console.log('Product found');
             console.log(obj);
+            res.render("Details", obj);
+
+            // res.render("Details", {prodcut: product, user: req.session.user});
 
 
         }
+        res.render("Details", obj);
+
         // res.render("Details", {prodcut: product, user: req.session.user});
     });
     // res.render(product);
+    // res.render("Details");
 
     
 });
@@ -284,13 +290,13 @@ router.get('/admin-products', isAuth.admin, (req, res, next) => {
 /**
  * Get the details of products .
  */
-// router.get('/details/:id',isAuth.user, (req, res, next) => {
-//     console.log("in details!!");
-//     let id = req.params.id;
-//     res.render("Details", { id: id });
+router.get('/details/:id',isAuth.user, (req, res, next) => {
+    console.log("in details!!");
+    let id = req.params.id;
+    res.render("Details", { id: id });
 
-//     //  res.sendFile(path.join(__dirname, 'views', 'Details.ejs'))
-//  });
+    //  res.sendFile(path.join(__dirname, 'views', 'Details.ejs'))
+ });
 
 /**
  * get the cart page.
