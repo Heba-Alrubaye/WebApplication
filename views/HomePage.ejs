@@ -56,6 +56,7 @@
         <h3 class="masthead-brand">Home Page</h3>
         <nav class="nav nav-masthead justify-content-center">
           <!-- <a class="nav-link " href="/views/HomePage.html">Home</a> -->
+          <% if (loggedin) { %>
           <a class="nav-link active" href="/home-product">Home</a>
           <a class="nav-link " href="/cart">Cart</a>
           <% if (admin) { %>
@@ -63,6 +64,10 @@
           <a class="nav-link" href="/admin-products">Admin Products</a>
           <% } %>
           <a class="nav-link" href="/logout">Logout</a>
+          <% } else { %>
+          <a class="nav-link" href="/login">Login</a>
+          <% } %>
+
 
         </nav>
       </div>

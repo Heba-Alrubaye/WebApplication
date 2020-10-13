@@ -52,12 +52,12 @@ app.get('/add-product', isAuth.admin, (req, res, next) => {
  * This method gets the products from the products collection, so it can be 
  * displayed on the home page.
  */
-app.get('/home-product', isAuth.user, async (req, res, next) => {
+app.get('/home-product', async (req, res, next) => {
     console.log('get products');
 
     Product.find({}).then(productBody => {
         console.log(productBody);
-        res.render("HomePage", { products: productBody, admin: req.session.admin });
+        res.render("HomePage", { products: productBody, loggedin: req.session.loggedin, admin: req.session.admin });
     })
 })
 
