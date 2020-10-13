@@ -78,7 +78,7 @@ app.post('/add-product', isAuth.admin, (req, res, next) => {
         .catch((err) => {
             console.log(err);
         })
-    res.render("HomePage");
+    res.redirect("/home-product");
 });
 
 /**
@@ -101,7 +101,7 @@ app.post('/add-cart', isAuth.user, (req, res, next) => {
         .catch((err) => {
             console.log(err);
         })
-    res.render("HomePage");
+    res.redirect("/home-product");
 });
 
 /**

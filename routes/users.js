@@ -135,7 +135,7 @@ router.post('/login', async (req, res, next) => {
     req.session.email = user.email;
     req.session.admin = user.admin;
     if (debug) console.log("User logged in: " + req.session.loggedin);
-    res.render('HomePage');
+    res.redirect('/home-product');
   } else {
     if (debug) console.log('Invalid password!');
     errors.push({ msg: 'Invalid password.' });
