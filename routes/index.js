@@ -1,14 +1,10 @@
 var express = require('express');
+const isAuth = require('../middleware/is-auth');
 var router = express.Router();
 
-router.get('/', (req, res, next) => {
-    if (req.session.loggedin) {
-        console.log("User " + req.session.email + " is logged in!");
-        res.render("HomePage");
-    } else {
-        console.log("User is not logged in!");
-        res.render("Login");
-    }
+router.get('/', isAuth.user, (req, res, next) => {
+    console.log("User " + req.session.email + " is logged in!");
+    res.redirect("/home-product");
 });
 
 module.exports = router;
