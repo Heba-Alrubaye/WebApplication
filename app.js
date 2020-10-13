@@ -44,7 +44,7 @@ app.use('/', require('./routes/users'));
  * get method for the add product page.
  */
 app.get('/add-product', isAuth.admin, (req, res, next) => {
-    res.render('addproduct');
+    res.render('AddProduct', {admin: req.session.admin});
 });
 
 /**
@@ -57,7 +57,7 @@ app.get('/home-product', isAuth.user, async (req, res, next) => {
 
     Product.find({}).then(productBody => {
         console.log(productBody);
-        res.render("HomePage", { products: productBody });
+        res.render("HomePage", { products: productBody, admin: req.session.admin });
     })
 })
 
@@ -114,7 +114,7 @@ app.get('/cart', isAuth.user, async (req, res, next) => {
 
     Cart.find({}).then(cartProductBody => {
         //console.log(productBody);
-        res.render("Cart", { carts: cartProductBody });
+        res.render("Cart", { carts: cartProductBody, admin: req.session.admin });
     })
 });
 
@@ -147,7 +147,7 @@ app.get('/admin-products', isAuth.admin, async (req, res, next) => {
     console.log('get products');
 
     Product.find({}).then(productBody => {
-        res.render("AdminProducts", { products: productBody });
+        res.render("AdminProducts", { products: productBody, admin: req.session.admin });
     })
 });
 

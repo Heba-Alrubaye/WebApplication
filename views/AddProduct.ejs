@@ -43,10 +43,12 @@
         <h3 class="masthead-brand">Add Product</h3>
         <nav class="nav nav-masthead justify-content-center">
           <!-- <a class="nav-link " href="/views/HomePage.html">Home</a> -->
-          <a class="nav-link" href="/home-product">Home</a>
+          <a class="nav-link " href="/home-product">Home</a>
           <a class="nav-link " href="/cart">Cart</a>
-          <a class="nav-link active" href="/add-product">Add Product</a>
-          <a class="nav-link" href="/admin-products">Admin Product</a>
+          <% if (admin) { %>
+          <a class="nav-link" href="/add-product">Add Product</a>
+          <a class="nav-link" href="/admin-products">Admin Products</a>
+          <% } %>
           <a class="nav-link" href="/logout">Logout</a>
 
         </nav>
