@@ -156,8 +156,11 @@ router.get('/admin-products', isAuth.admin, async (req, res, next) => {
  * get the details page for the selected product.
  */
 router.get('/details/:id', isAuth.user, (req, res, next) => {
-    let id = req.params.id;
-    res.render("Details", { id: id });
+    const id = req.params.id;
+    const name = req.params.name;
+    const price = req.params.price;
+    const description = req.params.description; 
+    res.render("Details", { id: id, name, price, description });
 });
 
 /**

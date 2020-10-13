@@ -11,8 +11,7 @@ require('./config/passport')(passport);
 
 var app = express();
 const db = require('./mongodb');
-const Product = db.Product;
-const Cart = db.Cart;
+
 
 // ejs
 app.set('view engine', 'ejs');
