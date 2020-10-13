@@ -257,19 +257,6 @@ app.get('/edit/:id', isAuth.admin, (req, res, next) => {
     res.render("Edit", { id: id });
 });
 
-// /**
-//  * direct to the home page when the user has logged in.
-//  */
-// app.get('/', (req, res, next) => {
-//     if (req.session.loggedin) {
-//         console.log("User " + req.session.email + " is logged in!");
-//         res.render("HomePage");
-//     } else {
-//         console.log("User is not logged in!");
-//         res.render("Login");
-//     }
-// });
-
 /**
  * get method for orders page.
  */
