@@ -38,16 +38,7 @@
   <link href="../public/stylesheets/home.css" rel="stylesheet">
 </head>
 
-<!-- <script>
-  function removeItem(id) {
-    console.log("removeItem: " + id);
-    var url = "/admin-products/" + id;
-    var xrq = new XMLHttpRequest();
-    xrq.timeout = 10000;
-    xrq.open("DELETE", url, true);
-    xrq.send();
-  }
-</script> -->
+
 
 <body class="text-center">
   <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
@@ -100,17 +91,15 @@
                     </p>
                     <div class="d-flex justify-content-between align-items-center">
                       <div class="btn-group">
-                        <!-- <form  action="/details" method="GET">
-                          <a type="submit" class="btn btn-sm btn-outline-secondary" >Details</a>
 
-
-                        </form> -->
+ 
+ 
                         <a class="btn btn-sm btn-outline-secondary" type="button" href="/details/<%= products[i]._id %>" role="button"
                           class="btn btn-sm btn-outline-secondary">Details</a>
 
-                        <form action="/add-cart" method="POST" >
+                        <form  action="/add-cart" method="POST" >
                           <button type="submit" class="btn btn-sm btn-outline-secondary">Add To Cart</button> 
-                      </form>
+                       </form>
 
                       </div> 
                     </div>

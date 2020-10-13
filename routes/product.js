@@ -87,7 +87,7 @@ router.post('/add-product', isAuth.admin, (req, res, next) => {
  */
 router.post('/add-cart', isAuth.user, (req, res, next) => {
     console.log('it entered post');
-    const { name, price } = req.body;
+    const { name, price, description } = req.body;
 
     var cartProductBody = req.body;
     const cartProduct = new Cart(cartProductBody); // this is modal object.
@@ -155,13 +155,15 @@ router.get('/admin-products', isAuth.admin, async (req, res, next) => {
 /**
  * get the details page for the selected product.
  */
-router.get('/details/:id', isAuth.user, (req, res, next) => {
-    const id = req.params.id;
-    const name = req.params.name;
-    const price = req.params.price;
-    const description = req.params.description; 
-    res.render("Details", { id: id, name, price, description });
-});
+// router.get('/details/:id', isAuth.user, (req, res, next) => {
+//     // const id = req.params.id;
+//     console.log("in details!!");
+//     const name = req.params.name;
+//     const price = req.params.price;
+//     const description = req.params.description; 
+//     res.render("Details", {name, price, description });
+//     res.redirect("/details/:id");
+// });
 
 /**
  * delete method for admin products. 
@@ -182,7 +184,7 @@ router.delete('/admin-products/:id', isAuth.admin, (req, res, next) => {
         console.log('Deleted item!');
         req.method = "GET";
         // res.direct('/admin-products');
-        // res.render("AdminProducts");
+        res.render("AdminProducts");
         // window.location.reload();
 
 
@@ -223,7 +225,8 @@ router.post('/edit/:id', isAuth.admin, async (req, res, next) => {
     console.log(productBody);
     let prod = {
         name: productBody.name,
-        price: productBody.price
+        price: productBody.price,
+        description: productBody.description
     };
 
     Product.updateOne({ _id: req.params.id }, prod, function (err) {
@@ -236,6 +239,28 @@ router.post('/edit/:id', isAuth.admin, async (req, res, next) => {
     res.render("AdminProducts");
 });
 
+
+router.post('/details/:id', isAuth.admin, async (req, res, next) => {
+    console.log("inside put details");
+    var productBody = req.body;
+    console.log(req.params.id);
+    console.log(productBody);
+    let prod = {
+        name: productBody.name,
+        price: productBody.price,
+        description: productBody.description
+    };
+
+    Product.findOne({ _id: req.params.id }, prod, function (err) {
+        if (err) {
+            console.log(err);
+        }
+        console.log('Product found');
+    });
+
+    res.render("Details");
+});
+
 /**
  * Get the admin products page.
  */
@@ -244,11 +269,15 @@ router.get('/admin-products', isAuth.admin, (req, res, next) => {
 });
 
 /**
- * Get the details of products page.
+ * Get the details of products .
  */
-// app.get('/details', (req, res, next) => {
-//     res.sendFile(path.join(__dirname, 'views', 'Details.html'))
-// });
+router.get('/details/:id',isAuth.user, (req, res, next) => {
+    console.log("in details!!");
+    let id = req.params.id;
+    res.render("Details", { id: id });
+
+    //  res.sendFile(path.join(__dirname, 'views', 'Details.ejs'))
+ });
 
 /**
  * get the cart page.

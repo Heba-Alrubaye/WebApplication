@@ -1,4 +1,4 @@
-<!doctype html>
+
 <html lang="en">
 
 <head>
@@ -8,6 +8,8 @@
   <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
   <meta name="generator" content="Jekyll v4.1.1">
   <title>Details</title>
+  <script src="../routes/product.js"></script> <!-- link to product routes page-->
+
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
@@ -36,98 +38,29 @@
   <link href="../public/stylesheets/home.css" rel="stylesheet">
 </head>
 
-<body class="text-center">
-  <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-    <p>the details page</p>
-    <% for(var i=0; i < products.length; i++) { %>
 
-        <p> 
-            <%= "Name: " + products[i].name %><br>
-        <%= "Price: " + products[i].price %><br>
-        <%= "Description: " + products[i].description %>
-
-
-
-        </p>
-  </div>
-  <% } %> 
-</body>
-
-</html>
-
-<!doctype html>
-<html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-  <meta name="generator" content="Jekyll v4.1.1">
-  <title>Cover Template · Bootstrap</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-
-  <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/cover/">
-
-  <!-- Bootstrap core CSS -->
-  <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <style>
-    .bd-placeholder-img {
-      font-size: 1.125rem;
-      text-anchor: middle;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
-
-    @media (min-width: 768px) {
-      .bd-placeholder-img-lg {
-        font-size: 3.5rem;
-      }
-    }
-  </style>
-  <!-- Custom styles for this template -->
-  <link href="../public/stylesheets/home.css" rel="stylesheet">
-</head>
-
-<!-- <script>
-  function removeItem(id) {
-    console.log("removeItem: " + id);
-    var url = "/admin-products/" + id;
-    var xrq = new XMLHttpRequest();
-    xrq.timeout = 10000;
-    xrq.open("DELETE", url, true);
-    xrq.send();
-  }
-</script> -->
 
 <body class="text-center">
   <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
     <header class="masthead mb-auto">
       <div class="inner">
-        <h3 class="masthead-brand">Home Page</h3>
+        <!-- <h3 class="masthead-brand">Home Page</h3>
         <nav class="nav nav-masthead justify-content-center">
-          <!-- <a class="nav-link " href="/views/HomePage.html">Home</a> -->
-          <a class="nav-link " href="/cart">Cart</a>
+          <a class="nav-link " href="/views/HomePage.html">Home</a> -->
+          <!-- <a class="nav-link " href="/cart">Cart</a>
           <a class="nav-link" href="/add-product">Add Product</a>
           <a class="nav-link" href="/admin-products">Admin Products</a>
           <a class="nav-link" href="/home-product">Home Page</a>
           <a class="nav-link" href="/logout">Logout</a>
 
-        </nav>
+        </nav>  -->
       </div>
     </header>
 
 
     <main role="main" class="inner cover">
-
-
       <div>
-        <div class="container">
-
+        <div class="container" > <!--id="/details/<%= id %>"-->
           <div class="row">
             <% for(var i=0; i < products.length; i++) { %>
               <div class="col-md-4" id="<%= products[i]._id %>">
@@ -144,23 +77,10 @@
                       <%= "Name: " + products[i].name %><br>
                       <%= "Price: " + products[i].price %><br>
                       <%= "Description: " + products[i].description %>
-
                     </p>
-                    <!-- <div class="d-flex justify-content-between align-items-center"> -->
-                      <!-- <div class="btn-group">
-                        <!-- <form  action="/details" method="GET">
-                          <a type="submit" class="btn btn-sm btn-outline-secondary" >Details</a>
 
-
-                        </form> -->
-                        <!-- <a class="btn btn-sm btn-outline-secondary" type="button" href="/details/<%= products[i]._id %>" role="button"
-                          class="btn btn-sm btn-outline-secondary">Details</a>
-
-                        <form action="/add-cart" method="POST" >
-                          <button type="submit" class="btn btn-sm btn-outline-secondary">Add To Cart</button> 
-                      </form>
-
-                      </div>   -->
+                    <a class="btn btn-sm btn-outline-secondary" type="button" href="/home-product" role="button"
+                      class="btn btn-sm btn-outline-secondary">Home</a>
                     </div>
                   </div>
                 </div>
