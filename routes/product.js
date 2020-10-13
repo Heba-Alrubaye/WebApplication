@@ -41,43 +41,54 @@
 
 
 
+
 var express = require('express');
+var path = require('path');
+const session = require('express-session');
+const passport = require('passport');
+const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo')(session);
 var router = express.Router();
+
+const isAuth = require('./middleware/is-auth');
+
+require('./config/passport')(passport);
+
+var app = express();
 const db = require('../mongodb');
 const Product = db.Product;
 const Cart = db.Cart;
 
-const session = require('express-session')
-const mongoose = require('mongoose');
-const MongoStore = require('connect-mongo')(session);
+// ejs
+app.set('view engine', 'ejs');
 
-router.use(session({
+// app.set('views', __dirname + "/views");
+// app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/')); // TODO: could be a security issue
+
+// body parser
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
+app.use(session({
     secret: 'OUR SECRET',
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     store: new MongoStore({ mongooseConnection: mongoose.connection }), // for storing the session in the database @nikisha
     cookie: { maxAge: 120 * 60 * 1000 } // this is for expiry of the session eg 2 hours if the user has not logged out @nikisha
 }));
 
+app.use(passport.initialize());
+app.use(passport.session());
 
-// app.use(passport.initialize());
-// app.use(passport.session());
-
-// app.use('/', require('./routes/index'));
-// app.use('/', require('./routes/users'));
-
-
-async export function fetchProducts(){
-    const prodResponse = await fetch('http://localhost:8000/api/products');
-    return prodResponse.json();
-}
-
-
+// routes
+app.use('/', require('./routes/index'));
+app.use('/', require('./routes/users'));
 
 /**
  * get method for the add product page.
  */
-router.get('/add-product', (req, res, next) => {
+app.get('/add-product', isAuth.admin, (req, res, next) => {
     res.render('addproduct');
 });
 
@@ -86,19 +97,19 @@ router.get('/add-product', (req, res, next) => {
  * This method gets the products from the products collection, so it can be 
  * displayed on the home page.
  */
-router.get('/home-product', async (req, res, next) => {
+app.get('/home-product', isAuth.user, async (req, res, next) => {
     console.log('get products');
 
     Product.find({}).then(productBody => {
         console.log(productBody);
-        res.render("homepage", { products: productBody });
+        res.render("HomePage", { products: productBody });
     })
 })
 
 /**
  * Creates the product and adds it to the product collection in mongodb.
  */
-router.post('/add-product', (req, res, next) => {
+app.post('/add-product', isAuth.admin, (req, res, next) => {
     console.log('it entered post');
     var productBody = req.body;
     const product = new Product(productBody); // this is modal object.
@@ -112,13 +123,13 @@ router.post('/add-product', (req, res, next) => {
         .catch((err) => {
             console.log(err);
         })
-    res.render("homepage");
+    res.render("HomePage");
 });
 
 /**
  * Creates the product and adds it to the cart collection in mongodb.
  */
-router.post('/add-cart', (req, res, next) => {
+app.post('/add-cart', isAuth.user, (req, res, next) => {
     console.log('it entered post');
     const { name, price } = req.body;
 
@@ -135,7 +146,7 @@ router.post('/add-cart', (req, res, next) => {
         .catch((err) => {
             console.log(err);
         })
-    res.render("homepage");
+    res.render("HomePage");
 });
 
 /**
@@ -143,12 +154,12 @@ router.post('/add-cart', (req, res, next) => {
  * This method gets the products from the cart collection, so it can be 
  * displayed on the cart page.
  */
-router.get('/cart', async (req, res, next) => {
+app.get('/cart', isAuth.user, async (req, res, next) => {
     console.log('get cart products');
 
     Cart.find({}).then(cartProductBody => {
         //console.log(productBody);
-        res.render("cart", { carts: cartProductBody });
+        res.render("Cart", { carts: cartProductBody });
     })
 });
 
@@ -157,7 +168,7 @@ router.get('/cart', async (req, res, next) => {
  * This method deletes the product off the cart page as well as the 
  * cart collection in mongodb.
  */
-router.delete('/cart/:id', (req, res, next) => {
+app.delete('/cart/:id', isAuth.user, (req, res, next) => {
     console.log("delete called");
     let prod = { _id: req.params.id }
 
@@ -168,7 +179,7 @@ router.delete('/cart/:id', (req, res, next) => {
         }
         console.log('Cart product has been deleted!');
         req.method = "GET";
-        res.render("cart");
+        res.render("Cart");
     });
 });
 
@@ -177,20 +188,20 @@ router.delete('/cart/:id', (req, res, next) => {
  * This method gets the products from the products collection, so it can be 
  * displayed on the admin page.
  */
-router.get('/admin-products', async (req, res, next) => {
+app.get('/admin-products', isAuth.admin, async (req, res, next) => {
     console.log('get products');
 
     Product.find({}).then(productBody => {
-        res.render("adminproducts", { products: productBody });
+        res.render("AdminProducts", { products: productBody });
     })
 });
 
 /**
  * get the details page for the selected product.
  */
-router.get('/details/:id', (req, res, next) => {
+app.get('/details/:id', isAuth.user, (req, res, next) => {
     let id = req.params.id;
-    res.render("details", { id: id });
+    res.render("Details", { id: id });
 });
 
 /**
@@ -198,7 +209,7 @@ router.get('/details/:id', (req, res, next) => {
  * This method deletes the product off the admin page as well as the 
  * products collection in mongodb.
  */
-router.delete('/admin-products/:id', (req, res, next) => {
+app.delete('/admin-products/:id', isAuth.admin, (req, res, next) => {
     console.log("delete called");
     let prod = { _id: req.params.id }
 
@@ -211,7 +222,7 @@ router.delete('/admin-products/:id', (req, res, next) => {
         }
         console.log('Deleted item!');
         req.method = "GET";
-        res.render("admin-products");
+        res.render("AdminProducts");
 
     });
 });
@@ -219,7 +230,7 @@ router.delete('/admin-products/:id', (req, res, next) => {
 /**
  * 
  */
-router.delete('/home-product/:id', (req, res, next) => {
+app.delete('/home-product/:id', isAuth.admin, (req, res, next) => {
     console.log("delete called");
     let prod = { _id: req.params.id }
 
@@ -231,7 +242,7 @@ router.delete('/home-product/:id', (req, res, next) => {
         }
         console.log('Deleted item!');
         req.method = "GET";
-        res.render("home-product");
+        res.render("AdminProducts");
 
     });
 });
@@ -242,7 +253,7 @@ router.delete('/home-product/:id', (req, res, next) => {
  * and it will then update it in the products collection in mongodb.
  * The update will be shown on the page.
  */
-router.post('/edit/:id', async (req, res, next) => {
+app.post('/edit/:id', isAuth.admin, async (req, res, next) => {
     console.log("Called edit PUT");
     var productBody = req.body;
     console.log(req.params.id);
@@ -259,13 +270,13 @@ router.post('/edit/:id', async (req, res, next) => {
         console.log('Product updated');
     });
 
-    res.render("admin-products");
+    res.render("AdminProducts");
 });
 
 /**
  * Get the admin products page.
  */
-router.get('/admin-products', (req, res, next) => {
+app.get('/admin-products', isAuth.admin, (req, res, next) => {
     res.render("admin-products");
 });
 
@@ -279,30 +290,41 @@ router.get('/admin-products', (req, res, next) => {
 /**
  * get the home page.
  */
-router.get('/home-product', (req, res, next) => {
+app.get('/home-product', isAuth.user, (req, res, next) => {
     res.render("homepage");
 });
 
 /**
  * get the cart page.
  */
-router.get('/cart', (req, res, next) => {
+app.get('/cart', isAuth.user, (req, res, next) => {
     res.render("cart");
 });
 
 /**
  * get the edit page for the selected product.
  */
-router.get('/edit/:id', (req, res, next) => {
+app.get('/edit/:id', isAuth.admin, (req, res, next) => {
     let id = req.params.id;
-    res.render("edit", { id: id });
+    res.render("Edit", { id: id });
 });
 
-
-
 // /**
-//  * get method for orders page.
+//  * direct to the home page when the user has logged in.
 //  */
-// router.get('/orders', (req, res, next) => {
-//     res.render("orders");
+// app.get('/', (req, res, next) => {
+//     if (req.session.loggedin) {
+//         console.log("User " + req.session.email + " is logged in!");
+//         res.render("HomePage");
+//     } else {
+//         console.log("User is not logged in!");
+//         res.render("Login");
+//     }
 // });
+
+/**
+ * get method for orders page.
+ */
+app.get('/orders', isAuth.user, (req, res, next) => {
+    res.render("orders");
+});
