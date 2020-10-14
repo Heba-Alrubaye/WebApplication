@@ -21,7 +21,20 @@ const Cart = db.Cart;
  creating items and updating items. //Nikisha  
  */
 
-
+// var fs = require('fs'); 
+// var path = require('path'); 
+// var multer = require('multer'); 
+  
+// var storage = multer.diskStorage({ 
+//     destination: (req, file, cb) => { 
+//         cb(null, 'uploads') 
+//     }, 
+//     filename: (req, file, cb) => { 
+//         cb(null, file.fieldname + '-' + Date.now()) 
+//     } 
+// }); 
+  
+// var upload = multer({ storage: storage }); 
 /**
  * using sessions.
  */
@@ -69,7 +82,28 @@ router.post('/add-product', isAuth.admin, (req, res, next) => {
     console.log('it entered post');
     var productBody = req.body;
     const product = new Product(productBody); // this is modal object.
+    // var obj = {
+    //     name: req.body.name,
+    //     price: req.body.price,
+    //     description: req.body.description,
+    //     img: {
+    //         data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)), 
+    //         contentType: 'image/png'
+    //     }
+    // }
+    
     console.log("product created");
+
+    // product.create(obj, (err, item) => { 
+    //     if (err) { 
+    //         console.log(err); 
+    //     } 
+    //     else { 
+    //         // item.save(); res.redirect('/home-product');  
+    //         res.redirect('/'); 
+    //     } 
+    // }); 
+    
     product.save()
         .then((productBody) => {
             console.log(productBody);
@@ -85,25 +119,25 @@ router.post('/add-product', isAuth.admin, (req, res, next) => {
 /**
  * Creates the product and adds it to the cart collection in mongodb.
  */
-router.post('/add-cart', isAuth.user, (req, res, next) => {
-    console.log('it entered post');
-    const { name, price, description } = req.body;
+// router.post('/add-cart', isAuth.user, (req, res, next) => {
+//     console.log('it entered post');
+//     const { name, price, description } = req.body;
 
-    var cartProductBody = req.body;
-    const cartProduct = new Cart(cartProductBody); // this is modal object.
-    console.log("cart product created");
+//     var cartProductBody = req.body;
+//     const cartProduct = new Cart(cartProductBody); // this is modal object.
+//     console.log("cart product created");
 
-    cartProduct.save()
-        .then((cartProductBody) => {
-            console.log(cartProductBody);
-            console.log("cart product saved");
+//     cartProduct.save()
+//         .then((cartProductBody) => {
+//             console.log(cartProductBody);
+//             console.log("cart product saved");
 
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-    res.redirect("/home-product");
-});
+//         })
+//         .catch((err) => {
+//             console.log(err);
+//         })
+//     res.redirect("/home-product");
+// });
 
 /**
  * Get method for cart products. 
@@ -118,6 +152,53 @@ router.get('/cart', isAuth.user, async (req, res, next) => {
         res.render("Cart", { carts: cartProductBody, user: req.session.user });
     })
 });
+
+
+
+
+router.post('/add-cart', isAuth.user, async (req, res) => {
+    console.log("Entered add cart method!");
+    const { prodId, name, price, quantity, description } = req.body;
+  
+    const userId = req.session.user; // the logged in user id
+  
+    try {
+      let cart = await Cart.findOne({ userId });
+  
+      if (cart) {
+        //cart exists for user
+        let itemIndex = cart.cartProds.findIndex(p => p.prodId == prodId);
+  
+        if (itemIndex > -1) {
+          //product exists in the cart, update the quantity
+          let productItem = cart.cartProds[itemIndex];
+          productItem.quantity = quantity;
+          cart.cartProds[itemIndex] = productItem;
+        } else {
+          //product does not exists in cart, add new item
+          cart.cartProds.push({prodId, name, price, quantity, description });
+        }
+        cart = await cart.save();
+        console.log(cart);
+        // return res.status(201).send(cart);
+      } else {
+        //no cart for user, create new cart
+        const newCart = await Cart.create({
+          userId,
+          cartProds: [{ prodId, name, price, quantity, description  }]
+        });
+        
+        // return res.status(201).send(newCart);
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Stuffed up!");
+    }
+    // res.redirect("/home-product");
+  });
+
+
+
 
 /**
  * delete method for cart products. 
@@ -240,37 +321,25 @@ router.post('/edit/:id', isAuth.admin, async (req, res, next) => {
 });
 
 
-// router.get('/details/:id', isAuth.admin,(req, res, next) => {
-//     console.log("inside put details");
-// //const product = await 
-//     Product.findOne({ _id: req.params.id }).then(product=>{
-//         // if (err) {
-//         //     console.log(err);
-//         // }
-//         console.log('Product found');
-//         res.render("Details", {prodcut: product, user: req.session.user});
-//     });
-//     // res.render(product);
 
-    
-// });
 
 router.get('/details/:id', isAuth.admin,(req, res, next) => {
     console.log("inside put details");
 //const product = await 
-    Product.findOne({ _id: req.params.id }, function(err, obj){
+    Product.findOne({ _id: req.params.id }, function(err, proddetail){
         if (err) {
             console.log(err);
         }else{
             console.log('Product found');
-            console.log(obj);
-            res.render("Details", obj);
+            console.log(proddetail);
+            var itemDetails = proddetail.productBody;
+            res.render("Details", {products: itemDetails}); //products: obj
 
             // res.render("Details", {prodcut: product, user: req.session.user});
 
 
         }
-        res.render("Details", obj);
+        // res.render("Details", obj);
 
         // res.render("Details", {prodcut: product, user: req.session.user});
     });
@@ -290,13 +359,13 @@ router.get('/admin-products', isAuth.admin, (req, res, next) => {
 /**
  * Get the details of products .
  */
-router.get('/details/:id',isAuth.user, (req, res, next) => {
-    console.log("in details!!");
-    let id = req.params.id;
-    res.render("Details", { id: id });
+// router.get('/details/:id',isAuth.user, (req, res, next) => {
+//     console.log("in details!!");
+//     let id = req.params.id;
+//     res.render("Details", {id: id, products: obj} );
 
-    //  res.sendFile(path.join(__dirname, 'views', 'Details.ejs'))
- });
+//     //  res.sendFile(path.join(__dirname, 'views', 'Details.ejs')) { id: id, 
+//  });
 
 /**
  * get the cart page.
