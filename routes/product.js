@@ -149,7 +149,7 @@ router.get('/cart', isAuth.user, async (req, res, next) => {
 
     Cart.find({}).then(cartProductBody => {
         //console.log(productBody);
-        res.render("Cart", { carts: cartProductBody, user: req.session.user });
+        res.render("Cart", { carts: cartProductBody, admin: req.session.admin });
     })
 });
 
