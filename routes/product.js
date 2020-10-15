@@ -15,6 +15,9 @@ const db = require('../mongodb');
 const Product = db.Product;
 const Cart = db.Cart;
 
+const http = require("http");
+const https = require("https");
+
 /**
  *Product page for where all the get, put, post, delete requests 
  are done to use in the application for adding in items, deleting items, 
@@ -380,6 +383,63 @@ router.get('/cart', isAuth.user, (req, res, next) => {
 router.get('/edit/:id', isAuth.admin, (req, res, next) => {
     let id = req.params.id;
     res.render("Edit", { id: id });
+});
+
+/** Get recommended products based on weather
+ * @author: Heba
+ */
+router.get('/recommended', async (req, res, next) => {
+    var api_key = 'at_RaNCjnrp4MH5VRSKfOdYbfkkoSyKO';
+    var api_url = 'https://geo.ipify.org/api/v1?';
+
+    var url = api_url + 'apiKey=' + api_key;
+
+    let str;
+    let weatherStr;
+
+    https.get(url, function(response) {
+        response.on('data', function(chunk) { str += chunk; });
+        response.on('end', function() { 
+            let geoInfo = JSON.parse(str.replace("undefined", ""));
+            let lat = geoInfo.location.lat;
+            let lng = geoInfo.location.lng;
+            console.log("lat: ", lat, " lng: ", lng);
+
+            const weatherAPIKey = "66bc30e927163dbeeb574de5e5bc4f74";
+            const weatherURL = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lng + "&APPID=" + weatherAPIKey;
+            
+            console.log(weatherURL);
+
+            http.get(weatherURL, function(response) {
+                response.on('data', function(chunk) { weatherStr += chunk; });
+                response.on('end', function() { 
+                    // let weatherInfo = JSON.parse(str.replace("undefined", ""));
+                    weatherStr = weatherStr.replace("undefined", "");
+                    let weatherJSON = JSON.parse(weatherStr);
+                    let weatherID = weatherJSON.weather[0].id;
+                    console.log(weatherID);
+
+                    let weather;
+
+                    if (weatherID >= 200 && weatherID < 600) {
+                        weather = "rain";
+                    } else if (weatherID >= 600 && weatherID < 700) {
+                        weather = "snow";
+                    } else if (weatherID >= 700 && weatherID <= 800) {
+                        weather = "sunny";
+                    }
+
+                    console.log("weather is: " + weather);
+
+                    Product.find({weather: weather}).then(productBody => {
+                        console.log(productBody);
+                        res.render("Recommended", { weather: weather, products: productBody, loggedin: req.session.loggedin, admin: req.session.admin });
+                    })
+                });
+            }).end();
+        });
+
+    }).end();
 });
 
 module.exports = router;
