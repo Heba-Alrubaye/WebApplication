@@ -389,8 +389,12 @@ router.get('/edit/:id', isAuth.admin, (req, res, next) => {
  * @author: Heba
  */
 router.get('/recommended', async (req, res, next) => {
-    var api_key = 'at_RaNCjnrp4MH5VRSKfOdYbfkkoSyKO';
+
+    // Service for IP Geolocation
     var api_url = 'https://geo.ipify.org/api/v1?';
+
+    // IPify API key
+    var api_key = 'at_RaNCjnrp4MH5VRSKfOdYbfkkoSyKO';
 
     var url = api_url + 'apiKey=' + api_key;
 
@@ -398,29 +402,42 @@ router.get('/recommended', async (req, res, next) => {
     let weatherStr;
 
     https.get(url, function(response) {
+        // Read data from API response
         response.on('data', function(chunk) { str += chunk; });
         response.on('end', function() { 
+            // Strip invalid string from JSON
             let geoInfo = JSON.parse(str.replace("undefined", ""));
+
+            // Extract user's latitude and longitude from response
             let lat = geoInfo.location.lat;
             let lng = geoInfo.location.lng;
             console.log("lat: ", lat, " lng: ", lng);
 
+            // OpenWeatherMap API key
             const weatherAPIKey = "66bc30e927163dbeeb574de5e5bc4f74";
+
+            // Query OpenWeatherMap using latitude and longitude
             const weatherURL = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lng + "&APPID=" + weatherAPIKey;
             
             console.log(weatherURL);
 
             http.get(weatherURL, function(response) {
+                // Read weather response
                 response.on('data', function(chunk) { weatherStr += chunk; });
-                response.on('end', function() { 
-                    // let weatherInfo = JSON.parse(str.replace("undefined", ""));
+                response.on('end', function() {
+                    // Strip invalid characters from response
                     weatherStr = weatherStr.replace("undefined", "");
+
+                    // Parse response JSON
                     let weatherJSON = JSON.parse(weatherStr);
+
+                    // Extract weather ID
                     let weatherID = weatherJSON.weather[0].id;
                     console.log(weatherID);
 
                     let weather;
 
+                    // Basic weather type identification based on ID
                     if (weatherID >= 200 && weatherID < 600) {
                         weather = "rain";
                     } else if (weatherID >= 600 && weatherID < 700) {
@@ -431,8 +448,10 @@ router.get('/recommended', async (req, res, next) => {
 
                     console.log("weather is: " + weather);
 
+                    // Query DB to find appropriate clothing for weather at user's location
                     Product.find({weather: weather}).then(productBody => {
                         console.log(productBody);
+                        // Render recommended products
                         res.render("Recommended", { weather: weather, products: productBody, loggedin: req.session.loggedin, admin: req.session.admin });
                     })
                 });
