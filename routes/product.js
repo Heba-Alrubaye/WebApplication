@@ -326,7 +326,7 @@ router.post('/edit/:id', isAuth.admin, async (req, res, next) => {
 
 
 
-router.get('/details/:id', isAuth.admin,(req, res, next) => {
+router.get('/details/:id', (req, res, next) => {
     console.log("inside put details");
 //const product = await 
     Product.findOne({ _id: req.params.id }, function(err, proddetail){
