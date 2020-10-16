@@ -10,7 +10,7 @@ const isAuth = require('./middleware/is-auth');
 require('./config/passport')(passport);
 
 var app = express();
-const db = require('./mongodb');
+const db = require('./config/mongodb');
 
 
 // ejs

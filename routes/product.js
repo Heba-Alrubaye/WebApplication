@@ -11,7 +11,7 @@ const isAuth = require('../middleware/is-auth');
 
 require('../config/passport')(passport);
 
-const db = require('../mongodb');
+const db = require('../config/mongodb');
 const Product = db.Product;
 const Cart = db.Cart;
 

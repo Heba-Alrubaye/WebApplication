@@ -6,7 +6,7 @@ const password = "BiINPxSnYq4ygeRf";
 
 const uri = `mongodb+srv://${username}:${password}@cluster0.7fsul.mongodb.net/shop`;
 
-const db = require('../mongodb');
+const db = require('../config/mongodb');
 const User = db.User;
 
 before(function (done) {

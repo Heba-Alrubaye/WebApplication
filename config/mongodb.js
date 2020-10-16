@@ -10,9 +10,9 @@ const connectionOptions = { useCreateIndex: true, useNewUrlParser: true, useUnif
 mongoose.connect(uri, connectionOptions);
 
 module.exports = {
-    User: require('./model/user'),
-    Product: require('./model/product'),
-    Cart: require('./model/cart')
+    User: require('../model/user'),
+    Product: require('../model/product'),
+    Cart: require('../model/cart')
 };
 
 async function main() {

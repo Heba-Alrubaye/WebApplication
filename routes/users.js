@@ -10,7 +10,7 @@ const zxcvbn = require('zxcvbn');
 const passport = require('passport');
 
 const config = require('../config/config');
-const db = require('../mongodb');
+const db = require('../config/mongodb');
 const User = db.User;
 
 const debug = true;
