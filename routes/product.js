@@ -61,7 +61,7 @@ router.use('/', require('./users'));
  * get method for the add product page.
  */
 router.get('/add-product', isAuth.admin, (req, res, next) => {
-    res.render('AddProduct', {admin: req.session.admin});
+    res.render('AddProduct');
 });
 
 /**
@@ -302,7 +302,7 @@ router.delete('/home-product/:id', isAuth.admin, (req, res, next) => {
  * and it will then update it in the products collection in mongodb.
  * The update will be shown on the page.
  */
-router.post('/edit/:id', isAuth.admin, async (req, res, next) => {
+router.post('/edit-product/:id', isAuth.admin, async (req, res, next) => {
     console.log("Called edit PUT");
     var productBody = req.body;
     console.log(req.params.id);
@@ -380,9 +380,9 @@ router.get('/cart', isAuth.user, (req, res, next) => {
 /**
  * get the edit page for the selected product.
  */
-router.get('/edit/:id', isAuth.admin, (req, res, next) => {
+router.get('/edit-product/:id', isAuth.admin, (req, res, next) => {
     let id = req.params.id;
-    res.render("Edit", { id: id });
+    res.render("editproduct", { id: id });
 });
 
 /** Get recommended products based on weather

@@ -7,8 +7,7 @@
   <meta name="description" content="">
   <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
   <meta name="generator" content="Jekyll v4.1.1">
-  <title>Add Product</title>
-
+  <title>Edit Product</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
@@ -52,10 +51,10 @@
       </div>
       </br>
       </br>
-      <h2>Enter Product Details</h2>
+      <h2>Edit Product Details</h2>
       </br>
       <main role="main">
-        <form class="form-signin" action="/add-product" method="POST">
+        <form action="/edit-product/<%= id %>" method="POST" class="form-edit">
           <input class="form-control" placeholder="Name" name="name" required>
           <div class="checkbox mb-1"></div>
           <input class="form-control" placeholder="Price" name="price" required>
@@ -64,12 +63,21 @@
           <div class="checkbox mb-1"></div>
           <input class="form-control" placeholder="Weather" name="weather" required>
           <div class="checkbox mb-3"></div>
-          <button class="btn btn-lg btn-primary btn-block" type="submit">Add Product</button>
+          <button id='<%= id %>' class="btn btn-lg btn-primary btn-block" type="submit">Edit Product</button>
         </form>
-      </div>
-    </main>
+  </div>
+  </main>
   </header>
-  <script src="../routes/product.js"></script>
+  <script>
+    function updateItem(id) {
+      console.log("updateItem: " + id);
+      var url = "/edit-product/" + id;
+      var xrq = new XMLHttpRequest();
+      xrq.timeout = 10000;
+      xrq.open("PUT", url, true);
+      xrq.send(JSON.stringify({ "test": "hello" }));
+    }
+  </script>
 </body>
 
 </html>

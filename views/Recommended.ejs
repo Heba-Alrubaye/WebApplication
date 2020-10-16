@@ -7,7 +7,7 @@
   <meta name="description" content="">
   <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
   <meta name="generator" content="Jekyll v4.1.1">
-  <title>Recommended Items for <%= weather %> weather</title>
+  <title>Recommended</title>
   <script src="../routes/product.js"></script> <!-- link to product routes page-->
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -44,7 +44,7 @@
   <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
     <header class="masthead mb-auto">
       <div class="inner">
-        <h3 class="masthead-brand">Recommended Items for <%= weather %> weather</h3>
+        <h3 class="masthead-brand">Recommended</h3>
         <nav class="nav nav-masthead justify-content-center">
           <!-- <a class="nav-link " href="/views/HomePage.html">Home</a> -->
           <% if (loggedin) { %>
@@ -58,65 +58,54 @@
           <% } else { %>
           <a class="nav-link" href="/login">Login</a>
           <% } %>
-
-
         </nav>
       </div>
     </header>
-
-
+    </br>
+    </br>
+    <h2>Items for <%= weather %> weather</h2>
+    </br>
     <main role="main" class="inner cover">
-
-
       <div>
         <div class="container">
-
           <div class="row">
             <% for(var i=0; i < products.length; i++) { %>
-              <div class="col-md-4" id="<%= products[i]._id %>">
-                <div class="card mb-4 shadow-sm">
-                  <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
+            <div class="col-md-4" id="<%= products[i]._id %>">
+              <div class="card mb-4 shadow-sm">
+                <% if (products[i].image != undefined) { %>
+                  <img src="<%= products[i].image %>" height="150px" style="width: 100%; object-fit: contain;">
+                  <% } else { %>
+                  <svg class="bd-placeholder-img card-img-top" width="100%" height="150"
                     xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img"
                     aria-label="Placeholder: Thumbnail">
                     <title>Placeholder</title>
                     <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
                       dy=".3em">Thumbnail</text>
                   </svg>
-                  <div class="card-body">
-                    <p class="card-text">
-                      <%= "Name: " + products[i].name %><br>
-                      <%= "Price: " + products[i].price %><br>
-                      <%= "Description: " + products[i].description %>
-
-                    </p>
-                    <div class="d-flex justify-content-between align-items-center">
-                      <div class="btn-group">
-
- 
- 
-                        <a class="btn btn-sm btn-outline-secondary" type="button" href="/details/<%= products[i]._id %>" role="button"
-                          class="btn btn-sm btn-outline-secondary">Details</a>
-
-                        <form  action="/add-cart" method="POST" >
-                          <button type="submit" class="btn btn-sm btn-outline-secondary">Add To Cart</button> 
-                       </form>
-
-                      </div> 
+                  <% } %>
+                <div class="card-body">
+                  <p class="card-text" style="color: slategrey;">
+                    <%= "Name: " + products[i].name %><br>
+                    <%= "Price: " + products[i].price %><br>
+                    <%= "Description: " + products[i].description %>
+                  </p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <a class="btn btn-sm btn-outline-secondary" type="button" href="/details/<%= products[i]._id %>"
+                        role="button" class="btn btn-sm btn-outline-secondary">Details</a>
+                      <form action="/add-cart" method="POST">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Add To Cart</button>
+                      </form>
                     </div>
                   </div>
                 </div>
               </div>
-            <% } %>            
+            </div>
+            <% } %>
           </div>
         </div>
       </div>
-
     </main>
-    <footer class="mastfoot mt-auto">
-      <div class="inner">
-
-      </div>
-    </footer>
   </div>
 </body>
 
