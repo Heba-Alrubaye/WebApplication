@@ -38,8 +38,6 @@
   <link href="../public/stylesheets/home.css" rel="stylesheet">
 </head>
 
-
-
 <body class="text-center">
   <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
     <header class="masthead mb-auto">
@@ -47,8 +45,8 @@
         <h3 class="masthead-brand">Home Page</h3>
         <nav class="nav nav-masthead justify-content-center">
           <!-- <a class="nav-link " href="/views/HomePage.html">Home</a> -->
-          <% if (loggedin) { %>
           <a class="nav-link active" href="/home-product">Home</a>
+          <% if (loggedin) { %>
           <a class="nav-link " href="/cart">Cart</a>
           <% if (admin) { %>
           <a class="nav-link" href="/add-product">Add Product</a>
@@ -58,69 +56,54 @@
           <% } else { %>
           <a class="nav-link" href="/login">Login</a>
           <% } %>
-
-
         </nav>
       </div>
     </header>
-
-
+    </br>
+    </br>
     <main role="main" class="inner cover">
-
-
       <div>
         <div class="container">
-
           <div class="row">
             <% for(var i=0; i < products.length; i++) { %>
-              <div class="col-md-4" id="<%= products[i]._id %>">
-                <div class="card mb-4 shadow-sm">
-                  <% if (products[i].image != undefined) { %>
-                    <img src="<%= products[i].image %>" height="150px" style="width: 100%; object-fit: contain;">
-                    <% } else { %>
-                    <svg class="bd-placeholder-img card-img-top" width="100%" height="150"
-                      xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img"
-                      aria-label="Placeholder: Thumbnail">
-                      <title>Placeholder</title>
-                      <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
-                        dy=".3em">Thumbnail</text>
-                    </svg>
-                    <% } %>
-                  <div class="card-body">
-                    <p class="card-text" style="color: slategrey;">
-                      <%= "Name: " + products[i].name %><br>
-                      <%= "Price: " + products[i].price %><br>
-                      <%= "Description: " + products[i].description %>
-
-                    </p>
-                    <div class="d-flex justify-content-between align-items-center">
-                      <div class="btn-group">
-
- 
- 
-                        <a class="btn btn-sm btn-outline-secondary" type="button" href="/details/<%= products[i]._id %>" role="button"
-                          class="btn btn-sm btn-outline-secondary">Details</a>
-
-                        <form  action="/add-cart" method="POST" >
-                          <button type="submit" class="btn btn-sm btn-outline-secondary">Add To Cart</button> 
-                       </form>
-
-                      </div> 
+            <div class="col-md-4" id="<%= products[i]._id %>">
+              <div class="card mb-4 shadow-sm">
+                <% if (products[i].image != undefined && String(products[i].image).length > 2) { %>
+                <img src="<%= products[i].image %>" height="150px" style="width: 100%; object-fit: contain;">
+                <% } else { %>
+                <svg class="bd-placeholder-img card-img-top" width="100%" height="150"
+                  xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img"
+                  aria-label="Placeholder: Thumbnail">
+                  <title>Placeholder</title>
+                  <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
+                    dy=".3em">Thumbnail</text>
+                </svg>
+                <% } %>
+                <div class="card-body">
+                  <p class="card-text" style="color: slategrey;">
+                    <%= "Name: " + products[i].name %><br>
+                    <%= "Price: " + products[i].price %><br>
+                    <%= "Description: " + products[i].description %>
+                  </p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <a class="btn btn-sm btn-outline-secondary" type="button" href="/details/<%= products[i]._id %>"
+                        role="button" class="btn btn-sm btn-outline-secondary">Details</a>
+                      <% if (loggedin) { %>
+                      <form action="/add-cart" method="POST">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Add To Cart</button>
+                      </form>
+                      <% } %>
                     </div>
                   </div>
                 </div>
               </div>
-            <% } %>            
+            </div>
+            <% } %>
           </div>
         </div>
       </div>
-
     </main>
-    <footer class="mastfoot mt-auto">
-      <div class="inner">
-
-      </div>
-    </footer>
   </div>
 </body>
 

@@ -336,7 +336,7 @@ router.get('/details/:id', (req, res, next) => {
             console.log('Product found');
             console.log(proddetail);
             var product = proddetail;
-            res.render("Details", {product: product}); //products: obj
+            res.render("Details", {product: product, loggedin: req.session.loggedin, admin: req.session.admin}); //products: obj
 
             // res.render("Details", {prodcut: product, user: req.session.user});
 
