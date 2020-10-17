@@ -159,46 +159,46 @@ router.get('/cart', isAuth.user, async (req, res, next) => {
 
 
 
-router.post('/add-cart', isAuth.user, async (req, res) => {
-    console.log("Entered add cart method!");
-    const { prodId, name, price, quantity, description } = req.body;
+// router.post('/add-cart', isAuth.user, async (req, res) => {
+//     console.log("Entered add cart method!");
+//     const { prodId, name, price, quantity, description } = req.body;
   
-    const userId = req.session.user; // the logged in user id
+//     const userId = req.session.user; // the logged in user id
   
-    try {
-      let cart = await Cart.findOne({ userId });
+//     try {
+//       let cart = await Cart.findOne({ userId });
   
-      if (cart) {
-        //cart exists for user
-        let itemIndex = cart.cartProds.findIndex(p => p.prodId == prodId);
+//       if (cart) {
+//         //cart exists for user
+//         let itemIndex = cart.cartProds.findIndex(p => p.prodId == prodId);
   
-        if (itemIndex > -1) {
-          //product exists in the cart, update the quantity
-          let productItem = cart.cartProds[itemIndex];
-          productItem.quantity = quantity;
-          cart.cartProds[itemIndex] = productItem;
-        } else {
-          //product does not exists in cart, add new item
-          cart.cartProds.push({prodId, name, price, quantity, description });
-        }
-        cart = await cart.save();
-        console.log(cart);
-        // return res.status(201).send(cart);
-      } else {
-        //no cart for user, create new cart
-        const newCart = await Cart.create({
-          userId,
-          cartProds: [{ prodId, name, price, quantity, description  }]
-        });
+//         if (itemIndex > -1) {
+//           //product exists in the cart, update the quantity
+//           let productItem = cart.cartProds[itemIndex];
+//           productItem.quantity = quantity;
+//           cart.cartProds[itemIndex] = productItem;
+//         } else {
+//           //product does not exists in cart, add new item
+//           cart.cartProds.push({prodId, name, price, quantity, description });
+//         }
+//         cart = await cart.save();
+//         console.log(cart);
+//         // return res.status(201).send(cart);
+//       } else {
+//         //no cart for user, create new cart
+//         const newCart = await Cart.create({
+//           userId,
+//           cartProds: [{ prodId, name, price, quantity, description  }]
+//         });
         
-        // return res.status(201).send(newCart);
-      }
-    } catch (err) {
-      console.log(err);
-      res.status(500).send("Stuffed up!");
-    }
-    // res.redirect("/home-product");
-  });
+//         // return res.status(201).send(newCart);
+//       }
+//     } catch (err) {
+//       console.log(err);
+//       res.status(500).send("Stuffed up!");
+//     }
+//     // res.redirect("/home-product");
+//   });
 
 
 
@@ -335,8 +335,8 @@ router.get('/details/:id', (req, res, next) => {
         }else{
             console.log('Product found');
             console.log(proddetail);
-            var itemDetails = proddetail.productBody;
-            res.render("Details", {products: itemDetails}); //products: obj
+            var product = proddetail;
+            res.render("Details", {product: product}); //products: obj
 
             // res.render("Details", {prodcut: product, user: req.session.user});
 
