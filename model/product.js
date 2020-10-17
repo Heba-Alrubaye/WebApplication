@@ -9,12 +9,12 @@ const productSchema = new Schema({
     name: { type: String, required: true },
     price: {type: Number, required:true },
     description: {type: String, required:true },
-    weather: {type: String, required: false}
-    // img: 
-    // { 
-    //     data: Buffer, 
-    //     contentType: String 
-    // } 
+    weather: {type: String, required: false},
+    image: 
+    { 
+        data: Buffer, 
+        contentType: String 
+    } 
 });
 
 // const Products =mongoose.model('Product', ProuctSchema);
