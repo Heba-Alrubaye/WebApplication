@@ -148,6 +148,7 @@ router.get('/google/redirect', (req, res, next) => {
   async.waterfall([
     function () {
       passport.authenticate('google', {
+        successReturnToOrRedirect: '/google',
         failureRedirect: '/login'
       })(req, res, next), req.user ? loggedIn(req.user) : true
     }

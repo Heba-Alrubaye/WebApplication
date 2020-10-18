@@ -86,12 +86,6 @@ router.get('/cart', isAuth.user, async (req, res, next) => {
     res.render("Cart", { carts: cart.cartProds, admin: req.session.admin })
 });
 
-router.get('/cart', isAuth.user, async (req, res, next) => {
-    Product.find({}).then(productBody => {
-        res.render("Cart", { products: productBody, admin: req.session.admin });
-    })
-});
-
 /**
  * Delete method for cart products. This method deletes the product off the cart page as well as the cart collection in mongodb.
  * @author Nikisha
@@ -147,9 +141,8 @@ router.get('/admin-products', isAuth.admin, async (req, res, next) => {
 });
 
 /**
- * delete method for admin products. 
- * This method deletes the product off the admin page as well as the 
- * products collection in mongodb.
+ * Delete method for admin products. This method deletes the product off the admin page as well as the products collection in mongodb.
+ * @author Nikisha
  */
 router.delete('/admin-products/:id', isAuth.admin, (req, res, next) => {
     let prod = { _id: req.params.id }
