@@ -9,8 +9,13 @@ const isAuth = require('../middleware/is-auth');
 const db = require('../config/mongodb');
 const Product = db.Product;
 const Cart = db.Cart;
+const User = db.User;
 
-const debug = false;
+/**
+ * Product page for where all the get, put, post, delete requests are done to use in the application
+ * for adding in items, deleting items, creating items and updating items.
+ * @author Nikisha  
+ */
 
 /**
  * Get method for products. This method gets the products from the products collection, so it can be displayed on the home page.
@@ -18,97 +23,74 @@ const debug = false;
  */
 router.get('/home-product', async (req, res, next) => {
     Product.find({}).then(productBody => {
-        console.log(productBody);
         res.render("HomePage", { products: productBody, loggedin: req.session.loggedin, admin: req.session.admin });
     })
 })
 
+/**
+ * Get details page for the selected product.
+ * @author Nikisha
+ */
 router.get('/details/:id', (req, res, next) => {
-    console.log("inside put details");
     Product.findOne({ _id: req.params.id }, function (err, proddetail) {
         if (err) {
             console.log(err);
         } else {
             var product = proddetail;
-            res.render("Details", { product: product, loggedin: req.session.loggedin, admin: req.session.admin }); //products: obj
+            res.render("Details", { product: product, loggedin: req.session.loggedin, admin: req.session.admin }); // products: obj
         }
     });
-});
-
-/**
- * Get method for cart products. This method gets the products from the cart collection, so it can be displayed on the cart page.
- * @author Nikisha
- */
-router.get('/cart', isAuth.user, async (req, res, next) => {
-    Cart.find({}).then(cartProductBody => {
-        res.render("Cart", { carts: cartProductBody, admin: req.session.admin });
-    })
 });
 
 /**
  * Creates the product and adds it to the cart collection in mongodb.
  * @author Nikisha
  */
-// router.post('/add-cart', isAuth.user, (req, res, next) => {
-//     console.log('it entered post');
-//     const { name, price, description } = req.body;
+router.post('/add-cart', isAuth.user, async (req, res, next) => {
+    var cartProds = [];
+    const user = await User.findOne({ 'email': { $in: [req.session.email] } });
 
-//     var cartProductBody = req.body;
-//     const cartProduct = new Cart(cartProductBody); // this is modal object.
-//     console.log("cart product created");
+    if (!user) return res.redirect('/login');
 
-//     cartProduct.save()
-//         .then((cartProductBody) => {
-//             console.log(cartProductBody);
-//             console.log("cart product saved");
+    const cart = await Cart.findOne({ userId: user._id.toString() });
+    const product = await Product.findOne({ _id: req.body.productToken })
 
-//         })
-//         .catch((err) => {
-//             console.log(err);
-//         })
-//     res.redirect("/home-product");
-// });
+    if (!cart) {
+        Cart.create({
+            userId: user._id,
+            cartProds: [{ name: product.name, price: product.price }]
+        });
+    } else {
+        cart.cartProds.push({
+            name: product.name,
+            price: product.price
+        });
+        Cart.updateOne({
+            _id: cart._id,
+            userId: user._id,
+            cartProds: cart.cartProds
+        }, (err) => {
+            if (err) throw err;
+            res.redirect('/home-product')
+        });
+    }
+});
 
-// router.post('/add-cart', isAuth.user, async (req, res) => {
-//     console.log("Entered add cart method!");
-//     const { prodId, name, price, quantity, description } = req.body;
+/**
+ * Get method for cart products. 
+ * This method gets the products from the cart collection, so it can be 
+ * displayed on the cart page.
+ */
+router.get('/cart', isAuth.user, async (req, res, next) => {
+    const cart = await Cart.findOne({ userid: req.session.user });
+    res.render("Cart", { carts: cart.cartProds, admin: req.session.admin })
+});
 
-//     const userId = req.session.user; // the logged in user id
-
-//     try {
-//       let cart = await Cart.findOne({ userId });
-
-//       if (cart) {
-//         //cart exists for user
-//         let itemIndex = cart.cartProds.findIndex(p => p.prodId == prodId);
-
-//         if (itemIndex > -1) {
-//           //product exists in the cart, update the quantity
-//           let productItem = cart.cartProds[itemIndex];
-//           productItem.quantity = quantity;
-//           cart.cartProds[itemIndex] = productItem;
-//         } else {
-//           //product does not exists in cart, add new item
-//           cart.cartProds.push({prodId, name, price, quantity, description });
-//         }
-//         cart = await cart.save();
-//         console.log(cart);
-//         // return res.status(201).send(cart);
-//       } else {
-//         //no cart for user, create new cart
-//         const newCart = await Cart.create({
-//           userId,
-//           cartProds: [{ prodId, name, price, quantity, description  }]
-//         });
-
-//         // return res.status(201).send(newCart);
-//       }
-//     } catch (err) {
-//       console.log(err);
-//       res.status(500).send("Stuffed up!");
-//     }
-//     // res.redirect("/home-product");
-//   });
+router.get('/cart', isAuth.user, async (req, res, next) => {
+    Product.find({}).then(productBody => {
+        res.render("Cart", { products: productBody, admin: req.session.admin });
+    })
+});
 
 /**
  * Delete method for cart products. This method deletes the product off the cart page as well as the cart collection in mongodb.
@@ -158,15 +140,16 @@ router.post('/add-product', isAuth.admin, (req, res, next) => {
   * Get method for products. This method gets the products from the products collection, so it can be displayed on the admin page.
   * @author Nikisha
   */
- router.get('/admin-products', isAuth.admin, async (req, res, next) => {
+router.get('/admin-products', isAuth.admin, async (req, res, next) => {
     Product.find({}).then(productBody => {
         res.render("AdminProducts", { products: productBody, admin: req.session.admin });
     })
 });
 
 /**
- * Delete method for admin products. This method deletes the product off the admin page as well as the products collection in mongodb.
- * @author Nikisha
+ * delete method for admin products. 
+ * This method deletes the product off the admin page as well as the 
+ * products collection in mongodb.
  */
 router.delete('/admin-products/:id', isAuth.admin, (req, res, next) => {
     let prod = { _id: req.params.id }
@@ -175,7 +158,6 @@ router.delete('/admin-products/:id', isAuth.admin, (req, res, next) => {
         if (err) {
             console.log(err);
         }
-        console.log('success')
     });
     res.redirect('/home-product');
 });

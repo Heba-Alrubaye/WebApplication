@@ -83,7 +83,7 @@
                   <p class="card-text" style="color: slategrey;">
                     <%= "Name: " + products[i].name %><br>
                     <%= "Price: " + products[i].price %><br>
-                    <%= "Description: " + products[i].description %>
+                    <!-- <%= "Description: " + products[i].description %> -->
                   </p>
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
@@ -91,9 +91,11 @@
                         role="button" class="btn btn-sm btn-outline-secondary">Details</a>
                       <% if (loggedin) { %>
                       <form action="/add-cart" method="POST">
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">Add To Cart</button>
+                        <input type="hidden" name="productToken" value="<%= products[i]._id %>">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Add To Cart</button> 
+                         
+                        <% } %>
                       </form>
-                      <% } %>
                     </div>
                   </div>
                 </div>
