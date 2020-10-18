@@ -3,26 +3,36 @@ var router = express.Router();
 
 const http = require("http");
 const https = require("https");
-
-const isAuth = require('../middleware/is-auth');
+const zxcvbn = require('zxcvbn');
 
 const db = require('../config/mongodb');
 const Product = db.Product;
-const Cart = db.Cart;
 
-router.get('/cart', isAuth.user, async (req, res, next) => {
+router.post('/password', (req, res, next) => {
     res.setHeader('Content-Type', 'application/json');
 
-    Cart.findOne({ userid: req.session.user }).then(cartBody => {
-        res.status(200).json({
-            carts: cartBody
+    var userBody = req.body;
+    const password = userBody.password;
+    
+    if (password == undefined) {
+        res.status(400).json({
+            success: false,
+            message: "Password missing."
         });
-    })
+        return;
+    }
+
+    let result = zxcvbn(password);
+
+    res.status(200).json({
+        result
+    });
+    return;
 });
 
 router.get('/products', async (req, res, next) => {
     res.setHeader('Content-Type', 'application/json');
-    
+
     Product.find({}).then(productBody => {
         res.status(200).json({
             products: productBody
@@ -30,7 +40,9 @@ router.get('/products', async (req, res, next) => {
     })
 });
 
-router.get('/recommended', async (req, res, next) => {
+router.get('/weather', async (req, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+
     // Service for IP Geolocation
     var api_url = 'https://geo.ipify.org/api/v1?';
 
@@ -67,6 +79,7 @@ router.get('/recommended', async (req, res, next) => {
                     res.status(200).json({
                         str
                     });
+                    return;
                 });
             }).end();
         });
