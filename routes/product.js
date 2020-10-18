@@ -117,55 +117,13 @@ router.post('/add-product', isAuth.admin, (req, res, next) => {
 });
 
 
-// router.post('/add-cart', isAuth.user, async (req, res) => {
-//     console.log("Entered add cart method!");
-//     const { prodId, name, price, quantity, description } = req.body;
-  
-//     const userId = req.session.user; // the logged in user id
-  
-//     try {
-//       let cart = await Cart.findOne({ userId });
-  
-//       if (cart) {
-//         //cart exists for user
-//         let itemIndex = cart.cartProds.findIndex(p => p.prodId == prodId);
-  
-//         if (itemIndex > -1) {
-//           //product exists in the cart, update the quantity
-//           let productItem = cart.cartProds[itemIndex];
-//           productItem.quantity = quantity;
-//           cart.cartProds[itemIndex] = productItem;
-//         } else {
-//           //product does not exists in cart, add new item
-//           cart.cartProds.push({prodId, name, price, quantity, description });
-//         }
-//         cart = await cart.save();
-//         console.log(cart);
-//         // return res.status(201).send(cart);
-//       } else {
-//         //no cart for user, create new cart
-//         const newCart = await Cart.create({
-//           userId,
-//           cartProds: [{ prodId, name, price, quantity, description  }]
-//         });
-        
-//         // return res.status(201).send(newCart);
-//       }
-//     } catch (err) {
-//       console.log(err);
-//       res.status(500).send("Stuffed up!");
-//     }
-//     // res.redirect("/home-product");
-//   });
 
 /**
  * Creates the product and adds it to the cart collection in mongodb.
  */
 router.post('/add-cart', isAuth.user, async (req, res, next) => {
     console.log('it entered post');
-    // find a cart based on the user id 
-    // if no match then create cart
-    // if there is a match then add to the carprods array 
+
 
     var cartProds = [];
     const user = await User.findOne({ 'email': { $in: [req.session.email] } });
