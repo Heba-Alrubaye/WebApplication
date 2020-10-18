@@ -2,9 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 /**
- * user schema for the collection in the database.
- * This sets the information that will be put into the collection and 
- * displayed on the page and used in app.js.
+ * User schema for the collection in the database. This sets the information that will be put into the collection and displayed on the page and used in app.js.
  */
 const userSchema = new Schema({
     email: { type: String, unique: true, required: true },
