@@ -3,6 +3,7 @@ var router = express.Router();
 
 const http = require("http");
 const https = require("https");
+const fetch = require("node-fetch")
 
 const isAuth = require('../middleware/is-auth');
 
@@ -24,9 +25,13 @@ const debug = false;
  * @author Nikisha
  */
 router.get('/home-product', async (req, res, next) => {
-    Product.find({}).then(productBody => {
-        res.render("HomePage", { products: productBody, loggedin: req.session.loggedin, admin: req.session.admin });
-    })
+    fetch(req.protocol + '://' + req.get('host') + '/api/products')
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            res.render("HomePage", { products: data.products, loggedin: req.session.loggedin, admin: req.session.admin });
+        });
 })
 
 /**
@@ -137,9 +142,13 @@ router.post('/add-product', isAuth.admin, (req, res, next) => {
   * @author Nikisha
   */
 router.get('/admin-products', isAuth.admin, async (req, res, next) => {
-    Product.find({}).then(productBody => {
-        res.render("AdminProducts", { products: productBody, admin: req.session.admin });
-    })
+    fetch(req.protocol + '://' + req.get('host') + '/api/products')
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            res.render("AdminProducts", { products: data.products, admin: req.session.admin });
+        });
 });
 
 /**
