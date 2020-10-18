@@ -34,6 +34,7 @@ app.use(passport.session());
 app.use('/', require('./routes/index'));
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/product'));
+app.use('/api', require('./routes/api'));
 
 // setting the port number that the website will run on
 var port = process.env.PORT || 8000;
