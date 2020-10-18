@@ -10,26 +10,14 @@ const Schema = mongoose.Schema;
 const cartSchema = new Schema({
     // productId: { type: Number, required: true },
     
-        userId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User"
-        },
-    cartProds:[
-        {
-            prodId: Number,
-            name: String,
-            price: Number,
-            // quantity: Number,
-            description:String
-
-            // name: { type: String, required: true },
-            // price: {type: Number, required:true },
-            // description: {type: String, required:true },
-
-        }
-
-
-    ],
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    },
+    cartProds:[{
+      name: String,
+      price: Number
+    }],
     active: {
         type: Boolean,
         default: true

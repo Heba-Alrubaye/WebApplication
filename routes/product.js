@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+// var LocalStorage = require('node-localstorage');
+// var localStorage = new LocalStorage('./scratch');
 
 var path = require('path');
 const session = require('express-session');
@@ -14,10 +16,12 @@ require('../config/passport')(passport);
 const db = require('../config/mongodb');
 const Product = db.Product;
 const Cart = db.Cart;
+const User = db.User;
 
 const http = require("http");
 const https = require("https");
 const cart = require('../model/cart');
+const { route } = require('.');
 
 /**
  *Product page for where all the get, put, post, delete requests 
@@ -157,124 +161,59 @@ router.post('/add-product', isAuth.admin, (req, res, next) => {
 /**
  * Creates the product and adds it to the cart collection in mongodb.
  */
-// router.post('/add-cart', isAuth.user, (req, res, next) => {
-//     console.log('it entered post');
-//     // find a cart based on the user id 
-//     // if no match then create cart
-//     // if there is a match then add to the carprods array 
+router.post('/add-cart', isAuth.user, async (req, res, next) => {
+    console.log('it entered post');
+    // find a cart based on the user id 
+    // if no match then create cart
+    // if there is a match then add to the carprods array 
 
-//     var productBody = req.body;
-//     console.log(req.params.id);
-//     console.log(productBody);
-//     // let prod = {
-//     //     prodId: productBody.prodId,
-//     //     name: productBody.name,
-//     //     price: productBody.price,
-//     //     description: productBody.description
-//     // };
-//     const userId = productBody.id;
-//     var cartProds = [];
-//     // const userId = req.session.user;
-//     // console.log(userId);
-//     const cart = Cart.findOne({_id:isAuth.user});
-//     let prod = {
-//         prodId: productBody.prodId,
-//         name: productBody.name,
-//         price: productBody.price,
-//         description: productBody.description
-//     };
-
-//         if(cart){
-//             cartProds.push({prod});
-//             console.log("cartprods:" + cartProds); //undefined for name, price and desc
-
-//         }
-//         else{
-//             Cart.create({
-//                 userId,
-//                 product: [{prodId, name, price, description  }]
-//                 // prod.save().
-   
-        
-//                 });
-        
-
-//        }
-
-//     // // this code will be for creating the cart 
-//     // const prod = Product.findOne({ _id: req.body.id }, function(err, product){
-//     //     if (err) {
-//     //         console.log(err);
-//     //     } else {
-//     //         console.log('Product found');
-//     //         console.log(product);
-//     //         var cart = [];
-//     //         cart.push({
-//     //             prodId : product._id,
-
-//     //         })
-//     //         const cartProduct = new Cart({userId: req.session.id, cartProds: cart});
-//     //         cartProduct.save()
-//     //         .then((cartProductBody) => {
-//     //             console.log(cartProductBody);
-//     //             console.log("cart product saved");
-
-//     //         })
-//     //         .catch((err) => {
-//     //             console.log(err);
-//     //         })
-//     //         res.redirect("/home-product");
-
-//     //     }
-
-//     // });
-
-
-
+    var cartProds = [];
+    const user = await User.findOne({ 'email': { $in: [req.session.email] } });
     
-// });
+    if(!user)  return res.redirect('/login');
+
+
+
+    const cart = await  Cart.findOne({userId :user._id.toString()});
+    const product = await Product.findOne({_id: req.body.productToken})
+
+    if(!cart) {
+        Cart.create({
+            userId: user._id,
+            cartProds: [{name: product.name, price: product.price}]
+            
+        });
+    } else {
+        cart.cartProds.push({
+            name: product.name, 
+            price: product.price
+        });
+        Cart.updateOne({
+            _id: cart._id,
+            userId: user._id,
+            cartProds:  cart.cartProds
+            
+        }, (err) => {
+            if (err) throw err;
+            console.log("1 document inserted");
+            res.redirect('/home-product')
+        });
+    }
+});
 
 /**
  * Get method for cart products. 
  * This method gets the products from the cart collection, so it can be 
  * displayed on the cart page.
  */
-// router.get('/cart', isAuth.user, async (req, res, next) => {
-//     console.log('get cart products');
-//     const userId = req.session.user;
-//     /* over here you'll get the cart for the user and then use products.find to get the list of products and their data eg name price etc  */
-//     // once you have the information then load the list onto the page 
-
-
-//     Product.find({userId}).then(cartProductBody => {
-//         //console.log(productBody);
-//         Product.find({cartProductBody}).then(cartProductBody =>{
-//             res.render("Cart", { carts: cartProductBody, admin: req.session.admin });
-
-//         })
-//     })
-// });
-
-
-router.get('/add-cart/:id', (req, res, next) => {
-    console.log("inside put details");
-//const product = await 
-    Product.findOne({ _id: req.params.id }, function(err, proddetail){
-        if (err) {
-            console.log(err);
-        }else{
-            console.log('Product found');
-            console.log(proddetail);
-            var product = proddetail;
-            res.render("Details", {product: product, loggedin: req.session.loggedin, admin: req.session.admin}); //products: obj
-
-
-        }
-
-    });
-
-    
+router.get('/cart', isAuth.user, async (req, res, next) => {
+    console.log('get cart products');
+    const cart = await Cart.findOne({userid: req.session.user});
+    res.render("Cart", {carts: cart.cartProds, admin: req.session.admin})
 });
+
+
+
 
 router.get('/cart', isAuth.user, async (req, res, next) => {
     console.log('get products');
@@ -317,18 +256,7 @@ router.get('/admin-products', isAuth.admin, async (req, res, next) => {
     })
 });
 
-/**
- * get the details page for the selected product.
- */
-// router.get('/details/:id', isAuth.user, (req, res, next) => {
-//     // const id = req.params.id;
-//     console.log("in details!!");
-//     const name = req.params.name;
-//     const price = req.params.price;
-//     const description = req.params.description; 
-//     res.render("Details", {name, price, description });
-//     res.redirect("/details/:id");
-// });
+
 
 /**
  * delete method for admin products. 

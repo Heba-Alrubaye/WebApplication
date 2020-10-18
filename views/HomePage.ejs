@@ -91,11 +91,9 @@
                         role="button" class="btn btn-sm btn-outline-secondary">Details</a>
                       <% if (loggedin) { %>
                       <form action="/add-cart" method="POST">
-                        <a class="btn btn-sm btn-outline-secondary" type="button" href="/add-cart/<%= products[i]._id %>"
-                          role="button" class="btn btn-sm btn-outline-secondary">Add to cart</a>
-                        <!-- <input type="text" name="id" value="<%=products[i]._id%>" hidden>
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">Add To Cart</button> -->
-                        
+                        <input type="hidden" name="productToken" value="<%= products[i]._id %>">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Add To Cart</button> 
+                         
                         <% } %>
                       </form>
                     </div>
