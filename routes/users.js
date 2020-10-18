@@ -13,19 +13,7 @@ const config = require('../config/config');
 const db = require('../config/mongodb');
 const User = db.User;
 
-const debug = true;
-
-const session = require('express-session')
-const mongoose = require('mongoose');
-const MongoStore = require('connect-mongo')(session);
-
-router.use(session({
-  secret: config.router.secret,
-  resave: false,
-  saveUninitialized: false,
-  store: new MongoStore({ mongooseConnection: mongoose.connection }), // for storing the session in the database
-  cookie: { secure: false, maxAge: 120 * 60 * 1000 } // this is for expiry of the session eg 2 hours if the user has not logged out
-}));
+const debug = false;
 
 /**
  * Get method for the register page.
@@ -157,15 +145,20 @@ router.get('/google', passport.authenticate('google', {
  * @author Toby
  */
 router.get('/google/redirect', (req, res, next) => {
-  if (req.user) {
+  async.waterfall([
+    function () {
+      passport.authenticate('google', {
+        failureRedirect: '/login'
+      })(req, res, next), req.user ? loggedIn(req.user) : true
+    }
+  ]);
+
+  function loggedIn(user) {
     req.session.loggedin = true;
-    req.session.email = req.user.email;
+    req.session.email = user.email;
     req.session.admin = user.admin;
+    res.redirect("/home-product");
   }
-  passport.authenticate('google', {
-    successReturnToOrRedirect: '/',
-    failureRedirect: '/login'
-  })(req, res, next);
 });
 
 /**
