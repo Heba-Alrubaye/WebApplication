@@ -17,6 +17,7 @@ const Cart = db.Cart;
 
 const http = require("http");
 const https = require("https");
+const cart = require('../model/cart');
 
 /**
  *Product page for where all the get, put, post, delete requests 
@@ -85,15 +86,7 @@ router.post('/add-product', isAuth.admin, (req, res, next) => {
     console.log('it entered post');
     var productBody = req.body;
     const product = new Product(productBody); // this is modal object.
-    // var obj = {
-    //     name: req.body.name,
-    //     price: req.body.price,
-    //     description: req.body.description,
-    //     img: {
-    //         data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)), 
-    //         contentType: 'image/png'
-    //     }
-    // }
+  
     
     console.log("product created");
 
@@ -118,45 +111,6 @@ router.post('/add-product', isAuth.admin, (req, res, next) => {
         })
     res.redirect("/home-product");
 });
-
-/**
- * Creates the product and adds it to the cart collection in mongodb.
- */
-// router.post('/add-cart', isAuth.user, (req, res, next) => {
-//     console.log('it entered post');
-//     const { name, price, description } = req.body;
-
-//     var cartProductBody = req.body;
-//     const cartProduct = new Cart(cartProductBody); // this is modal object.
-//     console.log("cart product created");
-
-//     cartProduct.save()
-//         .then((cartProductBody) => {
-//             console.log(cartProductBody);
-//             console.log("cart product saved");
-
-//         })
-//         .catch((err) => {
-//             console.log(err);
-//         })
-//     res.redirect("/home-product");
-// });
-
-/**
- * Get method for cart products. 
- * This method gets the products from the cart collection, so it can be 
- * displayed on the cart page.
- */
-router.get('/cart', isAuth.user, async (req, res, next) => {
-    console.log('get cart products');
-
-    Cart.find({}).then(cartProductBody => {
-        //console.log(productBody);
-        res.render("Cart", { carts: cartProductBody, admin: req.session.admin });
-    })
-});
-
-
 
 
 // router.post('/add-cart', isAuth.user, async (req, res) => {
@@ -200,8 +154,135 @@ router.get('/cart', isAuth.user, async (req, res, next) => {
 //     // res.redirect("/home-product");
 //   });
 
+/**
+ * Creates the product and adds it to the cart collection in mongodb.
+ */
+// router.post('/add-cart', isAuth.user, (req, res, next) => {
+//     console.log('it entered post');
+//     // find a cart based on the user id 
+//     // if no match then create cart
+//     // if there is a match then add to the carprods array 
+
+//     var productBody = req.body;
+//     console.log(req.params.id);
+//     console.log(productBody);
+//     // let prod = {
+//     //     prodId: productBody.prodId,
+//     //     name: productBody.name,
+//     //     price: productBody.price,
+//     //     description: productBody.description
+//     // };
+//     const userId = productBody.id;
+//     var cartProds = [];
+//     // const userId = req.session.user;
+//     // console.log(userId);
+//     const cart = Cart.findOne({_id:isAuth.user});
+//     let prod = {
+//         prodId: productBody.prodId,
+//         name: productBody.name,
+//         price: productBody.price,
+//         description: productBody.description
+//     };
+
+//         if(cart){
+//             cartProds.push({prod});
+//             console.log("cartprods:" + cartProds); //undefined for name, price and desc
+
+//         }
+//         else{
+//             Cart.create({
+//                 userId,
+//                 product: [{prodId, name, price, description  }]
+//                 // prod.save().
+   
+        
+//                 });
+        
+
+//        }
+
+//     // // this code will be for creating the cart 
+//     // const prod = Product.findOne({ _id: req.body.id }, function(err, product){
+//     //     if (err) {
+//     //         console.log(err);
+//     //     } else {
+//     //         console.log('Product found');
+//     //         console.log(product);
+//     //         var cart = [];
+//     //         cart.push({
+//     //             prodId : product._id,
+
+//     //         })
+//     //         const cartProduct = new Cart({userId: req.session.id, cartProds: cart});
+//     //         cartProduct.save()
+//     //         .then((cartProductBody) => {
+//     //             console.log(cartProductBody);
+//     //             console.log("cart product saved");
+
+//     //         })
+//     //         .catch((err) => {
+//     //             console.log(err);
+//     //         })
+//     //         res.redirect("/home-product");
+
+//     //     }
+
+//     // });
 
 
+
+    
+// });
+
+/**
+ * Get method for cart products. 
+ * This method gets the products from the cart collection, so it can be 
+ * displayed on the cart page.
+ */
+// router.get('/cart', isAuth.user, async (req, res, next) => {
+//     console.log('get cart products');
+//     const userId = req.session.user;
+//     /* over here you'll get the cart for the user and then use products.find to get the list of products and their data eg name price etc  */
+//     // once you have the information then load the list onto the page 
+
+
+//     Product.find({userId}).then(cartProductBody => {
+//         //console.log(productBody);
+//         Product.find({cartProductBody}).then(cartProductBody =>{
+//             res.render("Cart", { carts: cartProductBody, admin: req.session.admin });
+
+//         })
+//     })
+// });
+
+
+router.get('/add-cart/:id', (req, res, next) => {
+    console.log("inside put details");
+//const product = await 
+    Product.findOne({ _id: req.params.id }, function(err, proddetail){
+        if (err) {
+            console.log(err);
+        }else{
+            console.log('Product found');
+            console.log(proddetail);
+            var product = proddetail;
+            res.render("Details", {product: product, loggedin: req.session.loggedin, admin: req.session.admin}); //products: obj
+
+
+        }
+
+    });
+
+    
+});
+
+router.get('/cart', isAuth.user, async (req, res, next) => {
+    console.log('get products');
+
+    Product.find({}).then(productBody => {
+        res.render("Cart", { products: productBody, admin: req.session.admin });
+    })
+});
 
 /**
  * delete method for cart products. 
@@ -325,7 +406,9 @@ router.post('/edit-product/:id', isAuth.admin, async (req, res, next) => {
 
 
 
-
+/**
+ * get details page for the selected product.
+ */
 router.get('/details/:id', (req, res, next) => {
     console.log("inside put details");
 //const product = await 
@@ -338,16 +421,10 @@ router.get('/details/:id', (req, res, next) => {
             var product = proddetail;
             res.render("Details", {product: product, loggedin: req.session.loggedin, admin: req.session.admin}); //products: obj
 
-            // res.render("Details", {prodcut: product, user: req.session.user});
-
 
         }
-        // res.render("Details", obj);
 
-        // res.render("Details", {prodcut: product, user: req.session.user});
     });
-    // res.render(product);
-    // res.render("Details");
 
     
 });

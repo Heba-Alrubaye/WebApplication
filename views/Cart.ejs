@@ -1,4 +1,3 @@
-<!doctype html>
 <html lang="en">
 
 <head>
@@ -7,7 +6,8 @@
   <meta name="description" content="">
   <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
   <meta name="generator" content="Jekyll v4.1.1">
-  <title>Cart</title>
+  <title>Details</title>
+  <!-- <script src="../routes/product.js"></script> link to product routes page -->
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
@@ -41,73 +41,24 @@
   <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
     <header class="masthead mb-auto">
       <div class="inner">
-        <h3 class="masthead-brand">Carts</h3>
+        <h3 class="masthead-brand">cart</h3>
         <nav class="nav nav-masthead justify-content-center">
-          <a class="nav-link " href="/home-product">Home</a>
-          <a class="nav-link active" href="/cart">Cart</a>
-          <% if (admin) { %>
-          <a class="nav-link" href="/add-product">Add Product</a>
-          <a class="nav-link" href="/admin-products">Admin Products</a>
-          <% } %>
-          <a class="nav-link" href="/logout">Logout</a>
+          <a class="nav-link" href="/home-product">Home</a>
+
         </nav>
       </div>
-    </header>
-    </br>
-    </br>
-    <main role="main" class="inner cover">
-      <div>
-        <div class="container">
-          <div class="row">
-            <% if (carts != 'undefined') { %>
-            <% for(var i=0; i < carts.length; i++) { %>
-              <div class="col-md-4" id="<%= carts[i]._id %>">
-                <div class="card mb-4 shadow-sm">
-                  <% if (carts[i].image != undefined && String(carts[i].image).length > 2) { %>
-                    <img src="<%= carts[i].image %>" height="150px" style="width: 100%; object-fit: contain;">
-                    <% } else { %>
-                    <svg class="bd-placeholder-img card-img-top" width="100%" height="150"
-                      xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img"
-                      aria-label="Placeholder: Thumbnail">
-                      <title>Placeholder</title>
-                      <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
-                        dy=".3em">Thumbnail</text>
-                    </svg>
-                    <% } %>
-                  <div class="card-body">
-                    <p class="card-text" style="color: slategrey;">
-                      <%= "Name: " + carts[i].name %><br>
-                      <%= "Price: " + carts[i].price %><br>
-                      <%= "Description: " + carts[i].description %>
-                    </p>
-                    <div class="d-flex justify-content-between align-items-center">
-                      <div class="btn-group">
-                        <!-- <a class="btn btn-sm btn-outline-secondary" type="button" href="Edit.html" role="button"
-                          class="btn btn-sm btn-outline-secondary">Edit</a> -->
-                          <button id='<%= carts[i]._id %>' style="color:red" type="button" onclick='removeItem(id)' class="btn btn-sm btn-outline-secondary">Delete</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <% } %>  
-            
-            <% } %>
-          </div>
-        </div>
-      </div>
-    </main>
+      </br>
+      </br>
+
+      <main role="main">
+        <p class="card-text" style="color: white;">
+          <%= "Name: " + product.name %><br>
+          <%= "Price: " + product.price %><br>
+          <%= "Description: " + product.description %>
+        </p>
   </div>
-  <script>
-    function removeItem(id) {
-      console.log("removeItem: " + id);
-      var url = "/cart/" + id;
-      var xrq = new XMLHttpRequest();
-      xrq.timeout = 10000;
-      xrq.open("DELETE", url, true);
-      xrq.send();
-    }
-  </script>
+  </main>
+  </header>
 </body>
 
 </html>
