@@ -1,0 +1,91 @@
+GET /api/products
+
+curl -v -w "@curl-format.txt" --location --request GET 'http://localhost:5000/api/products' --header 'Cookie: connect.sid=s%3A7gEKCLyJ-LocKefSoZZiFvWLH8-3SPz-.faXpb6cOihFrjFh5J9n1IABCjhs92zDXniIFqjyLydg'
+
+"time_redirect": 0.000000,
+"time_namelookup": 0.031000,
+"time_connect": 0.031000,
+"time_appconnect": 0.000000,
+"time_pretransfer": 0.078000,
+"time_starttransfer": 0.156000,
+"time_total": 0.187000,
+"size_request": 192,
+"size_upload": 0,
+"size_download": 703,
+"size_header": 214
+
+curl -v -w "@curl-format.txt" --location --request GET 'https://nwen304-group-project-t4.herokuapp.com/api/products' --header 'Cookie: connect.sid=s%3AmYERIHINjIYiqIH_0YfQllqdijGgsfzZ.pMxJzJJMdflLhjc8uZqlL0mIBxpVGCn4c19%2FgXhlVb0'
+
+"time_redirect": 0.000000,
+"time_namelookup": 0.016000,
+"time_connect": 0.235000,
+"time_appconnect": 0.704000,
+"time_pretransfer": 0.719000,
+"time_starttransfer": 1.563000,
+"time_total": 1.579000,
+"size_request": 216,
+"size_upload": 0,
+"size_download": 703,
+"size_header": 246
+
+
+GET /api/weather
+
+curl -v -w "@curl-format.txt" --location --request GET 'http://localhost:5000/api/weather' --header 'Cookie: connect.sid=s%3A7gEKCLyJ-LocKefSoZZiFvWLH8-3SPz-.faXpb6cOihFrjFh5J9n1IABCjhs92zDXniIFqjyLydg'
+
+"time_redirect": 0.000000,
+"time_namelookup": 0.016000,
+"time_connect": 0.016000,
+"time_appconnect": 0.000000,
+"time_pretransfer": 0.047000,
+"time_starttransfer": 1.047000,
+"time_total": 1.078000,
+"size_request": 191,
+"size_upload": 0,
+"size_download": 503,
+"size_header": 214
+
+curl -v -w "@curl-format.txt" --location --request GET 'https://nwen304-group-project-t4.herokuapp.com/api/weather' --header 'Cookie: connect.sid=s%3AmYERIHINjIYiqIH_0YfQllqdijGgsfzZ.pMxJzJJMdflLhjc8uZqlL0mIBxpVGCn4c19%2FgXhlVb0'
+
+"time_redirect": 0.000000,
+"time_namelookup": 0.031000,
+"time_connect": 0.234000,
+"time_appconnect": 0.688000,
+"time_pretransfer": 0.703000,
+"time_starttransfer": 1.688000,
+"time_total": 1.719000,
+"size_request": 215,
+"size_upload": 0,
+"size_download": 474,
+"size_header": 246
+
+
+POST /api/password
+
+curl --location --request POST 'http://localhost:5000/api/password' --header 'Content-Type: application/x-www-form-urlencoded' --header 'Cookie: connect.sid=s%3A7gEKCLyJ-LocKefSoZZiFvWLH8-3SPz-.faXpb6cOihFrjFh5J9n1IABCjhs92zDXniIFqjyLydg' --data-urlencode 'password=IsThisAGoodPassword'
+
+"time_redirect": 0.000000,
+"time_namelookup": 0.000001,
+"time_connect": 0.015000,
+"time_appconnect": 0.000000,
+"time_pretransfer": 0.062000,
+"time_starttransfer": 0.078000,
+"time_total": 0.109000,
+"size_request": 290,
+"size_upload": 28,
+"size_download": 1232,
+"size_header": 215
+
+curl --location --request POST 'https://nwen304-group-project-t4.herokuapp.com/api/password' --header 'Content-Type: application/x-www-form-urlencoded' --header 'Cookie: connect.sid=s%3AmYERIHINjIYiqIH_0YfQllqdijGgsfzZ.pMxJzJJMdflLhjc8uZqlL0mIBxpVGCn4c19%2FgXhlVb0' --data-urlencode 'password=IsThisAGoodPassword'
+
+"time_redirect": 0.000000,
+"time_namelookup": 0.031000,
+"time_connect": 0.234000,
+"time_appconnect": 0.703000,
+"time_pretransfer": 0.718000,
+"time_starttransfer": 1.343000,
+"time_total": 1.375000,
+"size_request": 316,
+"size_upload": 28,
+"size_download": 1232,
+"size_header": 247
