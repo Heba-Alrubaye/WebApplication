@@ -11,6 +11,8 @@ const Product = db.Product;
 const Cart = db.Cart;
 const User = db.User;
 
+const debug = false;
+
 /**
  * Product page for where all the get, put, post, delete requests are done to use in the application
  * for adding in items, deleting items, creating items and updating items.
@@ -241,7 +243,7 @@ router.get('/recommended', async (req, res, next) => {
                         weather = "rain";
                     } else if (weatherID >= 600 && weatherID < 700) {
                         weather = "snow";
-                    } else if (weatherID >= 700 && weatherID <= 800) {
+                    } else if (weatherID >= 700) {
                         weather = "sunny";
                     }
 
@@ -249,7 +251,6 @@ router.get('/recommended', async (req, res, next) => {
 
                     // Query DB to find appropriate clothing for weather at user's location
                     Product.find({ weather: weather }).then(productBody => {
-                        console.log(productBody);
                         // Render recommended products
                         res.render("Recommended", { weather: weather, products: productBody, loggedin: req.session.loggedin, admin: req.session.admin });
                     })
