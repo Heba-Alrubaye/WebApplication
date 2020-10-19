@@ -6,6 +6,24 @@
 - Need to run 'npm install' to download the necessary packages
 - Then run node app.js to run the application from the terminal 
 
+The project is hosted in heroku: 
+
+### Using the application: 
+
+### Register:
+
+### Login:
+
+### HomePage:
+
+### Add Products:
+
+### Admin Products: 
+
+### Carts: 
+
+### Logout: 
+
 ## What the interface is (both for the web application and with REST API):
 ### There are two interfaces in our system. 
 -Web Application:
