@@ -2,9 +2,12 @@
 
 
 ## How to use your system(both for the web application and with REST API):
+- git clone the project
+- Need to run 'npm install' to download the necessary packages
+- Then run node app.js to run the application from the terminal 
 
 ## What the interface is (both for the web application and with REST API):
-## There are two interfaces in our system. 
+### There are two interfaces in our system. 
 -Web Application:
  - Administrator user for the site 
  - Basic user ie. customers
