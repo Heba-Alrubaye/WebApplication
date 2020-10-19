@@ -52,5 +52,4 @@ Admin Products:
 
 The basic user only has access to the home page and the carts page. This gives them the capabilty of viewing details of the product and adding it to their cart.
 
-## What error handling has been implemented in your system(both for the web
-application and with REST API):
+## What error handling has been implemented in your system(both for the web application and with REST API):
