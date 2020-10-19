@@ -87,6 +87,7 @@ router.post('/add-cart', isAuth.user, async (req, res, next) => {
  * Get method for cart products. 
  * This method gets the products from the cart collection, so it can be 
  * displayed on the cart page.
+ * @author Nikisha
  */
 router.get('/cart', isAuth.user, async (req, res, next) => {
     const cart = await Cart.findOne({ userid: req.session.user });

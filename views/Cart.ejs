@@ -46,10 +46,8 @@
           <a class="nav-link " href="/home-product">Home</a>
           <a class="nav-link" href="/recommended">Recommendations</a>
           <a class="nav-link active" href="/cart">Cart</a>
-          <% if (admin) { %>
           <a class="nav-link" href="/add-product">Add Product</a>
           <a class="nav-link" href="/admin-products">Admin Products</a>
-          <% } %>
           <a class="nav-link" href="/logout">Logout</a>
         </nav>
       </div>
@@ -64,17 +62,7 @@
             <% for(var i=0; i < carts.length; i++) { %>
               <div class="col-md-4" id="<%= carts[i]._id %>">
                 <div class="card mb-4 shadow-sm">
-                  <!-- <% if (carts[i].image != undefined && String(carts[i].image).length > 2) { %>
-                    <img src="<%= carts[i].image %>" height="150px" style="width: 100%; object-fit: contain;">
-                    <% } else { %>
-                    <svg class="bd-placeholder-img card-img-top" width="100%" height="150"
-                      xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img"
-                      aria-label="Placeholder: Thumbnail">
-                      <title>Placeholder</title>
-                      <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef"
-                        dy=".3em">Thumbnail</text>
-                    </svg>
-                    <% } %> -->
+
                   <div class="card-body">
                     <p class="card-text" style="color: slategrey;">
                       <%= "Name: " + carts[i].name %><br>
