@@ -20,9 +20,14 @@ The project is hosted in heroku:
 
 ### Admin Products: 
 
+### Recommendations:
+The add recommendation page to suggest clothes depends on weather (Clear, Snow, Cloud, Rain), when this page render, 
+we get all recommendation clothes, each item contains details button and add to cart button.
+
 ### Carts: 
 
 ### Logout: 
+Press logout and return to sign in page.
 
 ## What the interface is (both for the web application and with REST API):
 ### There are two interfaces in our system. 
