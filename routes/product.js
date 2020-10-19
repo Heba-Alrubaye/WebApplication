@@ -154,7 +154,7 @@ router.get('/admin-products', isAuth.admin, async (req, res, next) => {
 
 /**
  * Delete method for admin products. This method deletes the product off the admin page as well as the products collection in mongodb.
- * @author Nikisha
+ * @author Heba
  */
 router.delete('/admin-products/:id', isAuth.admin, (req, res, next) => {
     let prod = { _id: req.params.id }
@@ -169,7 +169,7 @@ router.delete('/admin-products/:id', isAuth.admin, (req, res, next) => {
 
 /**
  * Get the edit page for the selected product.
- * @author Nikisha
+ * @author Heba
  */
 router.get('/edit-product/:id', isAuth.admin, (req, res, next) => {
     let id = req.params.id;
