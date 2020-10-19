@@ -242,19 +242,7 @@ router.get('/recommended', async (req, res, next) => {
                     let weatherJSON = JSON.parse(weatherStr);
 
                     // Extract weather ID
-                    let weatherID = weatherJSON.weather[0].id;
-                    if (debug) console.log("Weather ID:" + weatherID);
-
-                    let weather;
-
-                    // Basic weather type identification based on ID
-                    if (weatherID >= 200 && weatherID < 600) {
-                        weather = "rain";
-                    } else if (weatherID >= 600 && weatherID < 700) {
-                        weather = "snow";
-                    } else if (weatherID >= 700) {
-                        weather = "sunny";
-                    }
+                    let weather = weatherJSON.weather[0].main;
 
                     if (debug) console.log("Weather: " + weather);
 
