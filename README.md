@@ -1,10 +1,10 @@
 # NWEN304 Online shopping portal for clothing: Boutique Clothes 
 
 
-##How to use your system(both for the web application and with REST API):
+## How to use your system(both for the web application and with REST API):
 
-##What the interface is (both for the web application and with REST API):
-##There are two interfaces in our system. 
+## What the interface is (both for the web application and with REST API):
+## There are two interfaces in our system. 
 -Web Application:
  - Administrator user for the site 
  - Basic user ie. customers
@@ -13,7 +13,7 @@
  - The client uses REST Api methods such as GET/POST/PUT/DELETE to access data from Mongodb. 
  - Mongodb sends back JSON data to the client. 
 
-###Admin Users: 
+### Admin Users: 
 Pre set admin user in mongodb: 
 - email: user1@gmail.com | password: User1234!@#$
 
@@ -26,7 +26,7 @@ Admin Products:
  - In this page, the admin can select a product to edit/update and delete a product from the applicaiton as well. 
 
 
-###Basic user: 
+### Basic user: 
 - Has no login
 
 The basic user only has access to the home page and the carts page. This gives them the capabilty of viewing details of the product and adding it to their cart.
