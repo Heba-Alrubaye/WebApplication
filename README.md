@@ -15,6 +15,8 @@ The project is hosted in heroku:
 ### Login:
 
 ### HomePage:
+The guest user, basic user(ie. customer) and admin can view this page. This is where the basic user will add the products to the cart form as well as view the details of the product. The admin user can do the same actions, but the 
+guest user can only view the details of the product. 
 
 ### Add Products:
 Admin can add new clothing items to the products by inputing the name of the item, price, description and weather which will then add the product to the admin products page as well as the home page. 
