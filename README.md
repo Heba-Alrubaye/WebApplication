@@ -60,12 +60,8 @@ Admin Products:
 
 
 ### Basic user: 
-Login details:
-- email: user2@gmail.com   | password: User123
+- Has no login
 
-The basic user only has access to the home page and the carts adn recommendation page. This gives them the capabilty of viewing details of the product and adding it to their cart.
-
-###Guest user: 
-The guest user has no login. They can only view products and see recommendations.
+The basic user only has access to the home page and the carts page. This gives them the capabilty of viewing details of the product and adding it to their cart.
 
 ## What error handling has been implemented in your system(both for the web application and with REST API):

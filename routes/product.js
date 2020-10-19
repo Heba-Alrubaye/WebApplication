@@ -22,7 +22,7 @@ const debug = false;
 
 /**
  * Get method for products. This method gets the products from the products collection, so it can be displayed on the home page.
- * @author Nikisha
+ * @author Nikisha & Heba
  */
 router.get('/home-product', async (req, res, next) => {
     fetch(req.protocol + '://' + req.get('host') + '/api/products')
@@ -140,7 +140,7 @@ router.post('/add-product', isAuth.admin, (req, res, next) => {
 
 /**
   * Get method for products. This method gets the products from the products collection, so it can be displayed on the admin page.
-  * @author Nikisha
+  * @author Nikisha & Heba
   */
 router.get('/admin-products', isAuth.admin, async (req, res, next) => {
     fetch(req.protocol + '://' + req.get('host') + '/api/products')
@@ -178,7 +178,7 @@ router.get('/edit-product/:id', isAuth.admin, (req, res, next) => {
 
 /**
  * Update product. This method will update the selected product in a seperate page and it will then update it in the products collection in mongodb. The update will be shown on the page.
- * @author Nikisha
+ * @author Heba
  */
 router.post('/edit-product/:id', isAuth.admin, async (req, res, next) => {
     var productBody = req.body;
